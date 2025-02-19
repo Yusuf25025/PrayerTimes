@@ -39,100 +39,76 @@
     </div>
 
     <script>
-        async function getPrayerTimes() {
-            const country = "Iraq"; // Country
-            const city = "Duhok"; // City
-            const apiUrl = `https://api.aladhan.com/v1/timingsByCity?city=${city}&country=${country}&method=2`; // Updated to HTTPS
+        const prayerTimes = [
+            { fajr: "05:24 AM", dhuhr: "12:30 PM", asr: "03:33 PM", maghrib: "05:58 PM", isha: "07:20 PM", date: "02/19" },
+            { fajr: "05:23 AM", dhuhr: "12:30 PM", asr: "03:34 PM", maghrib: "05:59 PM", isha: "07:21 PM", date: "02/20" },
+            { fajr: "05:22 AM", dhuhr: "12:30 PM", asr: "03:34 PM", maghrib: "06:00 PM", isha: "07:22 PM", date: "02/21" },
+            { fajr: "05:21 AM", dhuhr: "12:30 PM", asr: "03:35 PM", maghrib: "06:01 PM", isha: "07:23 PM", date: "02/22" },
+            { fajr: "05:20 AM", dhuhr: "12:30 PM", asr: "03:36 PM", maghrib: "06:02 PM", isha: "07:24 PM", date: "02/23" },
+            { fajr: "05:19 AM", dhuhr: "12:30 PM", asr: "03:36 PM", maghrib: "06:03 PM", isha: "07:25 PM", date: "02/24" },
+            { fajr: "05:18 AM", dhuhr: "12:29 PM", asr: "03:37 PM", maghrib: "06:04 PM", isha: "07:27 PM", date: "02/25" },
+            { fajr: "05:17 AM", dhuhr: "12:29 PM", asr: "03:38 PM", maghrib: "06:05 PM", isha: "07:28 PM", date: "02/26" },
+            { fajr: "05:16 AM", dhuhr: "12:29 PM", asr: "03:38 PM", maghrib: "06:06 PM", isha: "07:29 PM", date: "02/27" },
+            { fajr: "05:15 AM", dhuhr: "12:29 PM", asr: "03:39 PM", maghrib: "06:07 PM", isha: "07:30 PM", date: "02/28" },
+            { fajr: "05:14 AM", dhuhr: "12:29 PM", asr: "03:39 PM", maghrib: "06:07 PM", isha: "07:30 PM", date: "02/29" }
+        ];
 
-            try {
-                const response = await fetch(apiUrl);
-                const data = await response.json();
-                
-                // Log the data from API
-                console.log("Prayer Times Data:", data);
+        const currentTime = new Date();
+        const currentHour = currentTime.getHours();
+        const currentMinute = currentTime.getMinutes();
 
-                if (!data || !data.data || !data.data.timings) {
-                    console.error("Error: Prayer times data not found");
-                    return;
-                }
+        function getNextPrayer() {
+            // Iterate over each prayer time
+            for (let i = 0; i < prayerTimes.length; i++) {
+                const prayer = prayerTimes[i];
+                let nextPrayerTime = null;
+                let prayerName = '';
 
-                // Get prayer times
-                const timings = data.data.timings;
-                console.log("Prayer Times:", timings); // Log all prayer times for debugging
+                // Logic to check which prayer is next based on the time
+                const prayerHours = [prayer.fajr, prayer.dhuhr, prayer.asr, prayer.maghrib, prayer.isha];
+                const prayerNames = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
 
-                // Get the current time
-                const currentTime = new Date();
-                const currentHour = currentTime.getHours();
-                const currentMinute = currentTime.getMinutes();
+                for (let j = 0; j < prayerHours.length; j++) {
+                    const prayerSplit = prayerHours[j].split(":");
+                    const timeParts = prayerSplit[1].split(" ");
+                    const hour = parseInt(prayerSplit[0]);
+                    const minute = parseInt(timeParts[0]);
+                    const isPM = timeParts[1] === "PM";
 
-                console.log("Current Time:", currentHour, ":", currentMinute);
+                    let formattedHour = hour;
+                    if (isPM && hour !== 12) formattedHour += 12; // Convert PM hours to 24-hour format
+                    if (!isPM && hour === 12) formattedHour = 0; // Convert 12 AM to 0 hour
 
-                // Function to format the time into HH:MM
-                function formatTime(hour, minute) {
-                    return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-                }
+                    const prayerTime = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate(), formattedHour, minute);
 
-                // Function to find the next prayer
-                function getNextPrayer(timings, currentHour, currentMinute) {
-                    const prayers = [
-                        { name: "Fajr", time: timings.Fajr },
-                        { name: "Sunrise", time: timings.Sunrise },
-                        { name: "Dhuhr", time: timings.Dhuhr },
-                        { name: "Asr", time: timings.Asr },
-                        { name: "Maghrib", time: timings.Maghrib },
-                        { name: "Isha", time: timings.Isha }
-                    ];
-
-                    let nextPrayer = null;
-                    let minTimeDifference = Number.MAX_VALUE;
-
-                    // Loop through prayer times and find the next prayer
-                    prayers.forEach(prayer => {
-                        const [hour, minute] = prayer.time.split(":");
-                        const prayerTime = new Date();
-                        prayerTime.setHours(hour, minute, 0, 0);
-
-                        const timeDifference = prayerTime - currentTime;
-                        if (timeDifference > 0 && timeDifference < minTimeDifference) {
-                            minTimeDifference = timeDifference;
-                            nextPrayer = prayer;
-                        }
-                    });
-
-                    return nextPrayer;
-                }
-
-                const nextPrayer = getNextPrayer(timings, currentHour, currentMinute);
-
-                // Log the next prayer
-                console.log("Next Prayer:", nextPrayer);
-
-                // Update the next prayer name and countdown
-                if (nextPrayer) {
-                    document.getElementById("next-prayer").textContent = nextPrayer.name;
-                    const nextPrayerTime = nextPrayer.time.split(":");
-                    const nextPrayerHour = parseInt(nextPrayerTime[0], 10);
-                    const nextPrayerMinute = parseInt(nextPrayerTime[1], 10);
-
-                    const timeLeft = new Date();
-                    timeLeft.setHours(nextPrayerHour, nextPrayerMinute, 0, 0);
-                    const diff = timeLeft - currentTime;
-
-                    if (diff > 0) {
-                        const diffHours = Math.floor(diff / (1000 * 60 * 60));
-                        const diffMinutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                        document.getElementById("countdown").textContent = `${diffHours}:${diffMinutes.toString().padStart(2, '0')}`;
+                    // Compare if the current time is before the prayer time
+                    if (currentTime < prayerTime) {
+                        nextPrayerTime = prayerTime;
+                        prayerName = prayerNames[j];
+                        break;
                     }
-                } else {
-                    console.log("No next prayer found.");
                 }
-            } catch (error) {
-                console.error("Error fetching prayer times:", error);
+
+                if (nextPrayerTime) {
+                    const timeLeft = getTimeLeft(nextPrayerTime);
+                    document.getElementById('next-prayer').innerText = `Next Prayer: ${prayerName}`;
+                    document.getElementById('countdown').innerText = timeLeft;
+                    break;
+                }
             }
         }
 
-        // Get prayer times when the page loads
-        window.onload = getPrayerTimes;
+        function getTimeLeft(nextPrayerTime) {
+            const diff = nextPrayerTime - currentTime;
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+            return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
+        }
+
+        // Run the function on page load
+        getNextPrayer();
     </script>
+
 </body>
 </html>
