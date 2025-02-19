@@ -1,86 +1,139 @@
-<script>
-    const prayerTimes = [
-        {
-            date: "02/19",
-            fajr: "05:24 AM",
-            dhuhr: "12:30 PM",
-            asr: "03:33 PM",
-            maghrib: "05:58 PM",
-            isha: "07:20 PM",
-        },
-        {
-            date: "02/20",
-            fajr: "05:23 AM",
-            dhuhr: "12:30 PM",
-            asr: "03:34 PM",
-            maghrib: "05:59 PM",
-            isha: "07:21 PM",
-        },
-        // Add all the other dates and times here
-    ];
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prayer Times</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f7f7f7;
+            padding: 20px;
+        }
+        #next-prayer, #countdown {
+            font-size: 24px;
+            margin: 20px 0;
+        }
+        .prayer-times {
+            background-color: #fff;
+            margin: 10px;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin-top: 30px;
+        }
+        .calendar-day {
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            cursor: pointer;
+        }
+        .calendar-day:hover {
+            background-color: #e0e0e0;
+        }
+    </style>
+</head>
+<body>
 
-    const currentTime = new Date();
-    let nextPrayer = null;
-    let nextPrayerTime = null;
-    let nextPrayerName = "";
+    <h1>Prayer Times</h1>
 
-    // Helper function to convert time to 24-hour format and compare it
-    function to24HourFormat(timeStr) {
-        const [time, modifier] = timeStr.split(" ");
-        let [hours, minutes] = time.split(":").map(num => parseInt(num, 10));
+    <div id="next-prayer">Loading...</div>
+    <div id="countdown">--:--</div>
 
-        if (modifier === "PM" && hours !== 12) hours += 12;
-        if (modifier === "AM" && hours === 12) hours = 0;
+    <div id="prayer-times"></div>
 
-        return new Date(currentTime.toDateString() + ` ${hours}:${minutes}:00`);
-    }
+    <div class="calendar" id="calendar"></div>
 
-    // Loop through the prayer times and find the next prayer
-    prayerTimes.forEach(prayer => {
-        const todayPrayerTimes = [
-            { name: "Fajr", time: to24HourFormat(prayer.fajr) },
-            { name: "Dhuhr", time: to24HourFormat(prayer.dhuhr) },
-            { name: "Asr", time: to24HourFormat(prayer.asr) },
-            { name: "Maghrib", time: to24HourFormat(prayer.maghrib) },
-            { name: "Isha", time: to24HourFormat(prayer.isha) }
+    <script>
+        const prayerTimes = [
+            {
+                date: "02/19",
+                fajr: "05:24 AM",
+                dhuhr: "12:30 PM",
+                asr: "03:33 PM",
+                maghrib: "05:58 PM",
+                isha: "07:20 PM",
+            },
+            {
+                date: "02/20",
+                fajr: "05:23 AM",
+                dhuhr: "12:30 PM",
+                asr: "03:34 PM",
+                maghrib: "05:59 PM",
+                isha: "07:21 PM",
+            },
+            {
+                date: "02/21",
+                fajr: "05:22 AM",
+                dhuhr: "12:30 PM",
+                asr: "03:34 PM",
+                maghrib: "06:00 PM",
+                isha: "07:22 PM",
+            },
+            // Add all the other dates and times here
         ];
 
-        todayPrayerTimes.forEach(prayerTime => {
-            if (currentTime < prayerTime.time && (!nextPrayerTime || prayerTime.time < nextPrayerTime)) {
-                nextPrayerTime = prayerTime.time;
-                nextPrayer = prayer;
-                nextPrayerName = prayerTime.name;
-            }
+        const currentTime = new Date();
+        let nextPrayer = null;
+        let nextPrayerTime = null;
+        let nextPrayerName = "";
+
+        // Helper function to convert time to 24-hour format and compare it
+        function to24HourFormat(timeStr) {
+            const [time, modifier] = timeStr.split(" ");
+            let [hours, minutes] = time.split(":").map(num => parseInt(num, 10));
+
+            if (modifier === "PM" && hours !== 12) hours += 12;
+            if (modifier === "AM" && hours === 12) hours = 0;
+
+            return new Date(currentTime.toDateString() + ` ${hours}:${minutes}:00`);
+        }
+
+        // Loop through the prayer times and find the next prayer
+        prayerTimes.forEach(prayer => {
+            const todayPrayerTimes = [
+                { name: "Fajr", time: to24HourFormat(prayer.fajr) },
+                { name: "Dhuhr", time: to24HourFormat(prayer.dhuhr) },
+                { name: "Asr", time: to24HourFormat(prayer.asr) },
+                { name: "Maghrib", time: to24HourFormat(prayer.maghrib) },
+                { name: "Isha", time: to24HourFormat(prayer.isha) }
+            ];
+
+            todayPrayerTimes.forEach(prayerTime => {
+                if (currentTime < prayerTime.time && (!nextPrayerTime || prayerTime.time < nextPrayerTime)) {
+                    nextPrayerTime = prayerTime.time;
+                    nextPrayer = prayer;
+                    nextPrayerName = prayerTime.name;
+                }
+            });
         });
-    });
 
-    if (!nextPrayer) {
-        nextPrayerName = "None Today";
-        nextPrayerTime = new Date(currentTime);
-    }
+        if (!nextPrayer) {
+            nextPrayerName = "None Today";
+            nextPrayerTime = new Date(currentTime);
+        }
 
-    // Calculate time left for next prayer
-    const timeLeft = new Date(nextPrayerTime - currentTime);
-    const hoursLeft = String(timeLeft.getUTCHours()).padStart(2, "0");
-    const minutesLeft = String(timeLeft.getUTCMinutes()).padStart(2, "0");
+        // Calculate time left for next prayer
+        const timeLeft = new Date(nextPrayerTime - currentTime);
+        const hoursLeft = String(timeLeft.getUTCHours()).padStart(2, "0");
+        const minutesLeft = String(timeLeft.getUTCMinutes()).padStart(2, "0");
 
-    document.getElementById("next-prayer").innerText = nextPrayerName;
-    document.getElementById("countdown").innerText = `${hoursLeft}:${minutesLeft}`;
+        document.getElementById("next-prayer").innerText = nextPrayerName;
+        document.getElementById("countdown").innerText = `${hoursLeft}:${minutesLeft}`;
 
-    // Display all prayer times for the day
-    const prayerTimesContainer = document.getElementById("prayer-times");
-    prayerTimes.forEach(prayer => {
-        const prayerHTML = `
-            <div class="prayer-times">
-                <h3>${prayer.date}</h3>
-                <p>Fajr: ${prayer.fajr}</p>
-                <p>Dhuhr: ${prayer.dhuhr}</p>
-                <p>Asr: ${prayer.asr}</p>
-                <p>Maghrib: ${prayer.maghrib}</p>
-                <p>Isha: ${prayer.isha}</p>
-            </div>
-        `;
-        prayerTimesContainer.innerHTML += prayerHTML;
-    });
-
-</script>
+        // Display all prayer times for the day
+        const prayerTimesContainer = document.getElementById("prayer-times");
+        prayerTimes.forEach(prayer => {
+            const prayerHTML = `
+                <div class="prayer-times">
+                    <h3>${prayer.date}</h3>
+                    <p>Fajr: ${prayer.fajr}</p>
+                    <p>Dhuhr: ${prayer
