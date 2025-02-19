@@ -58,15 +58,15 @@
         const currentMinute = currentTime.getMinutes();
 
         function getNextPrayer() {
-            // Iterate over each prayer time
+            let nextPrayerTime = null;
+            let prayerName = '';
+
+            // Iterate over prayer times
             for (let i = 0; i < prayerTimes.length; i++) {
                 const prayer = prayerTimes[i];
-                let nextPrayerTime = null;
-                let prayerName = '';
 
-                // Logic to check which prayer is next based on the time
-                const prayerHours = [prayer.fajr, prayer.dhuhr, prayer.asr, prayer.maghrib, prayer.isha];
                 const prayerNames = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+                const prayerHours = [prayer.fajr, prayer.dhuhr, prayer.asr, prayer.maghrib, prayer.isha];
 
                 for (let j = 0; j < prayerHours.length; j++) {
                     const prayerSplit = prayerHours[j].split(":");
@@ -81,7 +81,7 @@
 
                     const prayerTime = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate(), formattedHour, minute);
 
-                    // Compare if the current time is before the prayer time
+                    // Find the next prayer
                     if (currentTime < prayerTime) {
                         nextPrayerTime = prayerTime;
                         prayerName = prayerNames[j];
@@ -89,12 +89,17 @@
                     }
                 }
 
-                if (nextPrayerTime) {
-                    const timeLeft = getTimeLeft(nextPrayerTime);
-                    document.getElementById('next-prayer').innerText = `Next Prayer: ${prayerName}`;
-                    document.getElementById('countdown').innerText = timeLeft;
-                    break;
-                }
+                if (nextPrayerTime) break; // Stop once the next prayer is found
+            }
+
+            // Update the UI
+            if (nextPrayerTime) {
+                const timeLeft = getTimeLeft(nextPrayerTime);
+                document.getElementById('next-prayer').innerText = `Next Prayer: ${prayerName}`;
+                document.getElementById('countdown').innerText = timeLeft;
+            } else {
+                document.getElementById('next-prayer').innerText = "Next Prayer: None Today";
+                document.getElementById('countdown').innerText = "00:00";
             }
         }
 
@@ -106,8 +111,9 @@
             return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
         }
 
-        // Run the function on page load
+        // Run the function to get the next prayer
         getNextPrayer();
+
     </script>
 
 </body>
