@@ -203,9 +203,14 @@
             calendarBody.innerHTML = rows;
         }
 
-        setInterval(getNextPrayer, 60000); // Update every minute
+        // Update countdown every second
+        setInterval(function() {
+            getNextPrayer();
+        }, 1000);
+
         displayCalendar();
         getNextPrayer(); // Call once on page load
     </script>
+
 </body>
 </html>
