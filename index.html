@@ -6,32 +6,96 @@
     <title>Prayer Times</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f7f7f7;
+            font-family: 'Arial', sans-serif;
+            background-color: #fafafa;
+            color: #333;
+            margin: 0;
             padding: 20px;
         }
-        #next-prayer, #countdown {
-            font-size: 24px;
-            margin: 20px 0;
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .current-day {
+            background-color: #ffffff;
+            padding: 20px;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 600px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .current-day h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #27ae60;
+        }
+        .current-day p {
+            font-size: 1.2rem;
+            margin: 5px 0;
+            color: #34495e;
         }
         .prayer-times {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 600px;
+            margin-top: 20px;
+        }
+        .prayer-time {
             background-color: #fff;
-            margin: 10px;
             padding: 15px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            font-size: 1.2rem;
+            color: #2c3e50;
+        }
+        .prayer-time h3 {
+            margin: 0;
+            color: #2980b9;
+        }
+        .prayer-time p {
+            margin: 5px 0;
+            color: #7f8c8d;
+        }
+        .countdown {
+            font-size: 1.5rem;
+            color: #e74c3c;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
 
-    <h1>Prayer Times</h1>
+    <div class="container">
+        <h1>Prayer Times</h1>
 
-    <div id="next-prayer">Loading...</div>
-    <div id="countdown">--:--</div>
+        <div class="current-day">
+            <h2>Next Prayer Countdown</h2>
+            <p id="today-date"></p>
+            <div id="countdown" class="countdown">Loading...</div>
+        </div>
 
-    <div id="prayer-times"></div>
+        <div class="current-day">
+            <h2>Today's Prayer Times</h2>
+            <div id="today-prayer-times">
+                <!-- Today's prayer times will appear here -->
+            </div>
+        </div>
+
+        <div class="prayer-times" id="all-prayer-times">
+            <!-- All prayer times for future days will appear here -->
+        </div>
+    </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -127,62 +191,83 @@
             ];
 
             const currentTime = new Date();
-            let nextPrayer = null;
-            let nextPrayerTime = null;
-            let nextPrayerName = "";
+            const todayDate = `${currentTime.getDate() < 10 ? '0' + currentTime.getDate() : currentTime.getDate()}/${currentTime.getMonth() + 1 < 10 ? '0' + (currentTime.getMonth() + 1) : currentTime.getMonth() + 1}`;
+            document.getElementById("today-date").innerText = `Date: ${todayDate}`;
 
-            // Helper function to convert time to 24-hour format and compare it
-            function to24HourFormat(timeStr) {
-                const [time, modifier] = timeStr.split(" ");
-                let [hours, minutes] = time.split(":").map(num => parseInt(num, 10));
+            // Countdown functionality for next prayer
+            function getNextPrayerTime() {
+                const prayerTimesToday = prayerTimes.find(prayer => prayer.date === todayDate);
 
-                if (modifier === "PM" && hours !== 12) hours += 12;
-                if (modifier === "AM" && hours === 12) hours = 0;
+                if (prayerTimesToday) {
+                    const prayerTimesArr = [
+                        { name: "Fajr", time: prayerTimesToday.fajr },
+                        { name: "Dhuhr", time: prayerTimesToday.dhuhr },
+                        { name: "Asr", time: prayerTimesToday.asr },
+                        { name: "Maghrib", time: prayerTimesToday.maghrib },
+                        { name: "Isha", time: prayerTimesToday.isha }
+                    ];
 
-                return new Date(currentTime.toDateString() + ` ${hours}:${minutes}:00`);
-            }
+                    const nextPrayer = prayerTimesArr.find(prayer => {
+                        const prayerTime = new Date(todayDate + " " + prayer.time);
+                        return prayerTime > currentTime;
+                    });
 
-            // Loop through the prayer times and find the next prayer
-            prayerTimes.forEach(prayer => {
-                const todayPrayerTimes = [
-                    { name: "Fajr", time: to24HourFormat(prayer.fajr) },
-                    { name: "Dhuhr", time: to24HourFormat(prayer.dhuhr) },
-                    { name: "Asr", time: to24HourFormat(prayer.asr) },
-                    { name: "Maghrib", time: to24HourFormat(prayer.maghrib) },
-                    { name: "Isha", time: to24HourFormat(prayer.isha) }
-                ];
-
-                todayPrayerTimes.forEach(prayerTime => {
-                    if (currentTime < prayerTime.time && (!nextPrayerTime || prayerTime.time < nextPrayerTime)) {
-                        nextPrayerTime = prayerTime.time;
-                        nextPrayer = prayer;
-                        nextPrayerName = prayerTime.name;
+                    if (nextPrayer) {
+                        const prayerTime = new Date(todayDate + " " + nextPrayer.time);
+                        const countdown = calculateCountdown(prayerTime);
+                        document.getElementById("countdown").innerText = `Next Prayer: ${nextPrayer.name} in ${countdown}`;
+                    } else {
+                        const nextDayPrayer = prayerTimes.find(prayer => prayer.date === "02/20"); // Handle next day's first prayer
+                        const prayerTime = new Date(nextDayPrayer.date + " " + nextDayPrayer.fajr);
+                        const countdown = calculateCountdown(prayerTime);
+                        document.getElementById("countdown").innerText = `Next Prayer: Fajr tomorrow in ${countdown}`;
                     }
-                });
-            });
-
-            // If there's no prayer time left today, set the next prayer to Fajr of the next day
-            if (!nextPrayer) {
-                const nextDay = new Date(currentTime);
-                nextDay.setDate(currentTime.getDate() + 1);
-                nextPrayer = prayerTimes.find(prayer => prayer.date === `02/${nextDay.getDate() < 10 ? '0' + nextDay.getDate() : nextDay.getDate()}`);
-                nextPrayerName = "Fajr";
-                nextPrayerTime = to24HourFormat(nextPrayer.fajr);
+                }
             }
 
-            // Calculate time left for next prayer
-            const timeLeft = new Date(nextPrayerTime - currentTime);
-            const hoursLeft = String(timeLeft.getUTCHours()).padStart(2, "0");
-            const minutesLeft = String(timeLeft.getUTCMinutes()).padStart(2, "0");
+            function calculateCountdown(prayerTime) {
+                const diff = prayerTime - currentTime;
+                const hours = Math.floor(diff / 1000 / 60 / 60);
+                const minutes = Math.floor((diff / 1000 / 60) % 60);
+                return `${hours} hours and ${minutes} minutes`;
+            }
 
-            document.getElementById("next-prayer").innerText = nextPrayerName;
-            document.getElementById("countdown").innerText = `${hoursLeft}:${minutesLeft}`;
+            // Display today's prayer times
+            const todayPrayerTimes = prayerTimes.find(prayer => prayer.date === todayDate);
+            const todayPrayerTimesDiv = document.getElementById("today-prayer-times");
 
-            // Display all prayer times for the upcoming days
-            const prayerTimesContainer = document.getElementById("prayer-times");
+            if (todayPrayerTimes) {
+                todayPrayerTimesDiv.innerHTML = `
+                    <div class="prayer-time">
+                        <h3>Fajr</h3>
+                        <p>${todayPrayerTimes.fajr}</p>
+                    </div>
+                    <div class="prayer-time">
+                        <h3>Dhuhr</h3>
+                        <p>${todayPrayerTimes.dhuhr}</p>
+                    </div>
+                    <div class="prayer-time">
+                        <h3>Asr</h3>
+                        <p>${todayPrayerTimes.asr}</p>
+                    </div>
+                    <div class="prayer-time">
+                        <h3>Maghrib</h3>
+                        <p>${todayPrayerTimes.maghrib}</p>
+                    </div>
+                    <div class="prayer-time">
+                        <h3>Isha</h3>
+                        <p>${todayPrayerTimes.isha}</p>
+                    </div>
+                `;
+            } else {
+                todayPrayerTimesDiv.innerHTML = "<p>No prayer times available for today.</p>";
+            }
+
+            // Display all prayer times for future days
+            const prayerTimesContainer = document.getElementById("all-prayer-times");
             prayerTimes.forEach(prayer => {
                 const prayerHTML = `
-                    <div class="prayer-times">
+                    <div class="prayer-time">
                         <h3>${prayer.date}</h3>
                         <p>Fajr: ${prayer.fajr}</p>
                         <p>Dhuhr: ${prayer.dhuhr}</p>
@@ -193,7 +278,12 @@
                 `;
                 prayerTimesContainer.innerHTML += prayerHTML;
             });
+
+            // Update countdown every minute
+            setInterval(getNextPrayerTime, 60000);
+            getNextPrayerTime(); // Initial call
         });
     </script>
+
 </body>
 </html>
