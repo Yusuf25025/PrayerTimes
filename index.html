@@ -127,6 +127,7 @@
             const currentTime = new Date();
             let nextPrayerTime = null;
             let prayerName = '';
+            let nextPrayer = null;
 
             for (let i = 0; i < prayerTimes.length; i++) {
                 const prayer = prayerTimes[i];
@@ -142,6 +143,7 @@
                     if (currentTime < prayers[j].time) {
                         nextPrayerTime = prayers[j].time;
                         prayerName = prayers[j].name;
+                        nextPrayer = prayers[j];
                         break;
                     }
                 }
@@ -201,9 +203,9 @@
             calendarBody.innerHTML = rows;
         }
 
-        setInterval(getNextPrayer, 60000);
+        setInterval(getNextPrayer, 60000); // Update every minute
         displayCalendar();
-        getNextPrayer();
+        getNextPrayer(); // Call once on page load
     </script>
 </body>
 </html>
