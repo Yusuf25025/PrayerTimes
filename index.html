@@ -1,9 +1,42 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prayer Times</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f8f8f8;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            margin: 20px auto;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #D4AF37;
+        }
+        .time {
+            font-size: 24px;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to My Digital Prayer Times</h1>
-    <p>Stay tuned for updates!</p>
+
+    <h1>Prayer Times</h1>
+
+    <div class="card">
+        <h2>Next Prayer: <span id="next-prayer">Loading...</span></h2>
+        <p>Time left: <span id="countdown">--:--</span></p>
+    </div>
+
 </body>
 </html>
