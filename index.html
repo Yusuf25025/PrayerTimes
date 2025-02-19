@@ -39,64 +39,81 @@
     </div>
 
     <script>
-        // Fetch prayer times from an API
-        const apiUrl = 'https://api.aladhan.com/v1/timingsByCity?city=Duhok&country=Iraq&method=2';
+        // Adjusting to get the prayer times from the API
+        async function getPrayerTimes() {
+            const country = "Iraq"; // Country
+            const city = "Duhok"; // City
+            const apiUrl = `http://api.aladhan.com/v1/timingsByCity?city=${city}&country=${country}&method=2`; 
 
-        async function fetchPrayerTimes() {
-            try {
-                const response = await fetch(apiUrl);
-                const data = await response.json();
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+            
+            // Get prayer times
+            const timings = data.data.timings;
 
-                if (data.code === 200) {
-                    const timings = data.data.timings;
-                    updatePrayerTimes(timings);
-                } else {
-                    console.error('Failed to fetch prayer times:', data);
+            // Get the current time
+            const currentTime = new Date();
+            const currentHour = currentTime.getHours();
+            const currentMinute = currentTime.getMinutes();
+
+            // Function to format the time into HH:MM
+            function formatTime(hour, minute) {
+                return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+            }
+
+            // Function to find the next prayer
+            function getNextPrayer(timings, currentHour, currentMinute) {
+                const prayers = [
+                    { name: "Fajr", time: timings.Fajr },
+                    { name: "Sunrise", time: timings.Sunrise },
+                    { name: "Dhuhr", time: timings.Dhuhr },
+                    { name: "Asr", time: timings.Asr },
+                    { name: "Maghrib", time: timings.Maghrib },
+                    { name: "Isha", time: timings.Isha }
+                ];
+
+                let nextPrayer = null;
+                let minTimeDifference = Number.MAX_VALUE;
+
+                // Loop through prayer times and find the next prayer
+                prayers.forEach(prayer => {
+                    const [hour, minute] = prayer.time.split(":");
+                    const prayerTime = new Date();
+                    prayerTime.setHours(hour, minute, 0, 0);
+
+                    const timeDifference = prayerTime - currentTime;
+                    if (timeDifference > 0 && timeDifference < minTimeDifference) {
+                        minTimeDifference = timeDifference;
+                        nextPrayer = prayer;
+                    }
+                });
+
+                return nextPrayer;
+            }
+
+            const nextPrayer = getNextPrayer(timings, currentHour, currentMinute);
+
+            // Update the next prayer name and countdown
+            if (nextPrayer) {
+                document.getElementById("next-prayer").textContent = nextPrayer.name;
+                const nextPrayerTime = nextPrayer.time.split(":");
+                const nextPrayerHour = parseInt(nextPrayerTime[0], 10);
+                const nextPrayerMinute = parseInt(nextPrayerTime[1], 10);
+
+                const timeLeft = new Date();
+                timeLeft.setHours(nextPrayerHour, nextPrayerMinute, 0, 0);
+                const diff = timeLeft - currentTime;
+
+                if (diff > 0) {
+                    const diffHours = Math.floor(diff / (1000 * 60 * 60));
+                    const diffMinutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    document.getElementById("countdown").textContent = `${diffHours}:${diffMinutes.toString().padStart(2, '0')}`;
                 }
-            } catch (error) {
-                console.error('Error fetching prayer times:', error);
             }
         }
 
-        function updatePrayerTimes(timings) {
-            const now = new Date();
-            const nextPrayer = getNextPrayer(timings, now);
-
-            document.getElementById('next-prayer').textContent = `Next Prayer: ${nextPrayer.name}`;
-            document.getElementById('countdown').textContent = `Time left: ${nextPrayer.time}`;
-        }
-
-        function getNextPrayer(timings, currentTime) {
-            const prayerTimes = Object.entries(timings).map(([name, time]) => ({
-                name,
-                time: new Date(`${currentTime.toDateString()} ${time}`).getTime()
-            }));
-
-            prayerTimes.sort((a, b) => a.time - b.time);
-
-            for (let prayer of prayerTimes) {
-                if (prayer.time > currentTime.getTime()) {
-                    const timeLeft = formatTime(prayer.time - currentTime.getTime());
-                    return { name: prayer.name, time: timeLeft };
-                }
-            }
-
-            // If no prayers are left today, it means the next prayer is tomorrow's Fajr
-            return { name: 'Fajr', time: 'Tomorrow' };
-        }
-
-        function formatTime(milliseconds) {
-            const minutes = Math.floor(milliseconds / 60000);
-            const seconds = Math.floor((milliseconds % 60000) / 1000);
-            return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-        }
-
-        // Initial fetch when the page loads
-        fetchPrayerTimes();
-
-        // Optionally, you could set an interval to fetch new times every minute or so
-        setInterval(fetchPrayerTimes, 60000);  // Refresh every 60 seconds
+        // Get prayer times when the page loads
+        window.onload = getPrayerTimes;
     </script>
-
 </body>
 </html>
