@@ -7,38 +7,65 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            text-align: center;
             background-color: #f8f8f8;
             padding: 20px;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
         .card {
             background: white;
-            padding: 20px;
-            margin: 20px auto;
-            width: 80%;
-            max-width: 400px;
+            padding: 25px;
+            margin: 20px;
+            width: 90%;
+            max-width: 500px;
             border-radius: 10px;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
         }
         h1 {
             color: #D4AF37;
+            margin-bottom: 15px;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .prayer-time {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        .time-left {
+            font-size: 22px;
+            color: #E74C3C;
+            font-weight: bold;
+        }
+        .all-prayers ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .all-prayers li {
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+            font-size: 18px;
         }
         .time {
-            font-size: 24px;
-            font-weight: bold;
+            font-size: 16px;
+            color: #555;
         }
     </style>
 </head>
 <body>
 
-    <h1>Prayer Times</h1>
-
     <div class="card">
-        <h2>Next Prayer: <span id="next-prayer">Loading...</span></h2>
-        <p>Time left: <span id="countdown">--:--</span></p>
+        <h1>Prayer Times</h1>
+        <h2 id="next-prayer">Next Prayer: Loading...</h2>
+        <p class="time-left" id="countdown">--:--</p>
     </div>
 
-    <div class="card">
+    <div class="card all-prayers">
         <h2>All Prayer Times:</h2>
         <ul id="all-prayers">
             <!-- Prayer times will be listed here -->
@@ -124,11 +151,11 @@
                 const listItem = document.createElement("li");
                 listItem.innerHTML = `
                     <strong>${prayer.date}</strong><br>
-                    Fajr: ${prayer.fajr}<br>
-                    Dhuhr: ${prayer.dhuhr}<br>
-                    Asr: ${prayer.asr}<br>
-                    Maghrib: ${prayer.maghrib}<br>
-                    Isha: ${prayer.isha}
+                    Fajr: <span class="time">${prayer.fajr}</span><br>
+                    Dhuhr: <span class="time">${prayer.dhuhr}</span><br>
+                    Asr: <span class="time">${prayer.asr}</span><br>
+                    Maghrib: <span class="time">${prayer.maghrib}</span><br>
+                    Isha: <span class="time">${prayer.isha}</span>
                 `;
                 prayerList.appendChild(listItem);
             });
@@ -138,7 +165,6 @@
         getNextPrayer();
         displayAllPrayers();
         setInterval(getNextPrayer, 60000); // Update every minute
-
     </script>
 
 </body>
