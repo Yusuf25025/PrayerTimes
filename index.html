@@ -42,7 +42,7 @@
         async function getPrayerTimes() {
             const country = "Iraq"; // Country
             const city = "Duhok"; // City
-            const apiUrl = `http://api.aladhan.com/v1/timingsByCity?city=${city}&country=${country}&method=2`; 
+            const apiUrl = `https://api.aladhan.com/v1/timingsByCity?city=${city}&country=${country}&method=2`; // Updated to HTTPS
 
             try {
                 const response = await fetch(apiUrl);
