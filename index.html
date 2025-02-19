@@ -6,93 +6,50 @@
     <title>Prayer Times</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #fafafa;
-            color: #333;
-            margin: 0;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f7f7f7;
             padding: 20px;
         }
-        h1 {
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            color: #2c3e50;
-        }
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .current-day {
-            background-color: #ffffff;
-            padding: 20px;
-            margin-bottom: 20px;
-            width: 100%;
-            max-width: 600px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-        .countdown {
-            font-size: 1.6rem;
-            color: #e74c3c;
-            font-weight: bold;
+        #next-prayer, #countdown {
+            font-size: 24px;
             margin: 20px 0;
-            background-color: #f9f9f9;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            color: #333;
         }
-        .countdown span {
-            font-size: 2rem;
-            color: #27ae60;
-        }
-        .today-prayers {
-            background-color: #ffffff;
-            padding: 20px;
-            margin-top: 20px;
-            width: 100%;
-            max-width: 600px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-        .prayer-time {
+        .prayer-times {
             background-color: #fff;
+            margin: 10px;
             padding: 15px;
-            margin: 10px 0;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            font-size: 1.2rem;
-            color: #2c3e50;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+            width: 100%;
         }
-        .prayer-time h3 {
-            margin: 0;
-            color: #2980b9;
+        .prayer-times h3 {
+            color: #333;
         }
-        .prayer-time p {
-            margin: 5px 0;
-            color: #7f8c8d;
+        .prayer-times p {
+            color: #555;
+        }
+        .countdown-style {
+            font-size: 30px;
+            font-weight: bold;
+            color: #007BFF;
+        }
+        .prayer-info {
+            font-size: 18px;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>Prayer Times</h1>
+    <h1>Prayer Times</h1>
 
-        <!-- Countdown to next prayer -->
-        <div class="current-day">
-            <h2>Next Prayer Countdown</h2>
-            <div id="countdown" class="countdown">Loading...</div>
-        </div>
+    <div id="next-prayer">Loading...</div>
+    <div id="countdown" class="countdown-style">--:--</div>
 
-        <!-- Today's prayer times -->
-        <div class="today-prayers" id="today-prayer-times">
-            <!-- Today's prayer times will appear here -->
-        </div>
-
-    </div>
+    <div id="prayer-times"></div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -188,79 +145,70 @@
             ];
 
             const currentTime = new Date();
-            const todayDate = `${currentTime.getDate() < 10 ? '0' + currentTime.getDate() : currentTime.getDate()}/${currentTime.getMonth() + 1 < 10 ? '0' + (currentTime.getMonth() + 1) : currentTime.getMonth() + 1}`;
-            
-            // Update today's prayer times
-            const todayPrayerTimes = prayerTimes.find(prayer => prayer.date === todayDate);
-            const todayPrayerTimesDiv = document.getElementById("today-prayer-times");
+            let nextPrayer = null;
+            let nextPrayerTime = null;
+            let nextPrayerName = "";
 
-            if (todayPrayerTimes) {
-                todayPrayerTimesDiv.innerHTML = `
-                    <div class="prayer-time">
-                        <h3>Fajr</h3>
-                        <p>${todayPrayerTimes.fajr}</p>
-                    </div>
-                    <div class="prayer-time">
-                        <h3>Dhuhr</h3>
-                        <p>${todayPrayerTimes.dhuhr}</p>
-                    </div>
-                    <div class="prayer-time">
-                        <h3>Asr</h3>
-                        <p>${todayPrayerTimes.asr}</p>
-                    </div>
-                    <div class="prayer-time">
-                        <h3>Maghrib</h3>
-                        <p>${todayPrayerTimes.maghrib}</p>
-                    </div>
-                    <div class="prayer-time">
-                        <h3>Isha</h3>
-                        <p>${todayPrayerTimes.isha}</p>
-                    </div>
-                `;
-            } else {
-                todayPrayerTimesDiv.innerHTML = "<p>No prayer times available for today.</p>";
+            // Helper function to convert time to 24-hour format and compare it
+            function to24HourFormat(timeStr) {
+                const [time, modifier] = timeStr.split(" ");
+                let [hours, minutes] = time.split(":").map(num => parseInt(num, 10));
+
+                if (modifier === "PM" && hours !== 12) hours += 12;
+                if (modifier === "AM" && hours === 12) hours = 0;
+
+                return new Date(currentTime.toDateString() + ` ${hours}:${minutes}:00`);
             }
 
-            // Countdown functionality for next prayer
-            function getNextPrayerTime() {
-                const prayerTimesToday = prayerTimes.find(prayer => prayer.date === todayDate);
+            // Loop through the prayer times and find the next prayer
+            prayerTimes.forEach(prayer => {
+                const todayPrayerTimes = [
+                    { name: "Fajr", time: to24HourFormat(prayer.fajr) },
+                    { name: "Dhuhr", time: to24HourFormat(prayer.dhuhr) },
+                    { name: "Asr", time: to24HourFormat(prayer.asr) },
+                    { name: "Maghrib", time: to24HourFormat(prayer.maghrib) },
+                    { name: "Isha", time: to24HourFormat(prayer.isha) }
+                ];
 
-                if (prayerTimesToday) {
-                    const prayerTimesArr = [
-                        { name: "Fajr", time: prayerTimesToday.fajr },
-                        { name: "Dhuhr", time: prayerTimesToday.dhuhr },
-                        { name: "Asr", time: prayerTimesToday.asr },
-                        { name: "Maghrib", time: prayerTimesToday.maghrib },
-                        { name: "Isha", time: prayerTimesToday.isha }
-                    ];
-
-                    const nextPrayer = prayerTimesArr.find(prayer => {
-                        const prayerTime = new Date(todayDate + " " + prayer.time);
-                        return prayerTime > currentTime;
-                    });
-
-                    if (nextPrayer) {
-                        const prayerTime = new Date(todayDate + " " + nextPrayer.time);
-                        const countdown = calculateCountdown(prayerTime);
-                        document.getElementById("countdown").innerHTML = `Next Prayer: ${nextPrayer.name} in <span>${countdown}</span>`;
-                    } else {
-                        document.getElementById("countdown").innerHTML = "No more prayers today.";
+                todayPrayerTimes.forEach(prayerTime => {
+                    if (currentTime < prayerTime.time && (!nextPrayerTime || prayerTime.time < nextPrayerTime)) {
+                        nextPrayerTime = prayerTime.time;
+                        nextPrayer = prayer;
+                        nextPrayerName = prayerTime.name;
                     }
-                }
+                });
+            });
+
+            // If there's no prayer time left today, set the next prayer to Fajr of the next day
+            if (!nextPrayer) {
+                const nextDay = new Date(currentTime);
+                nextDay.setDate(currentTime.getDate() + 1);
+                nextPrayer = prayerTimes.find(prayer => prayer.date === `02/${nextDay.getDate() < 10 ? '0' + nextDay.getDate() : nextDay.getDate()}`);
+                nextPrayerName = "Fajr";
+                nextPrayerTime = to24HourFormat(nextPrayer.fajr);
             }
 
-            function calculateCountdown(prayerTime) {
-                const diff = prayerTime - currentTime;
-                const hours = Math.floor(diff / (1000 * 60 * 60));
-                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                return `${hours}h ${minutes}m`;
-            }
+            // Calculate time left for next prayer
+            const timeLeft = new Date(nextPrayerTime - currentTime);
+            const hoursLeft = String(timeLeft.getUTCHours()).padStart(2, "0");
+            const minutesLeft = String(timeLeft.getUTCMinutes()).padStart(2, "0");
 
-            // Initialize countdown
-            getNextPrayerTime();
-            setInterval(getNextPrayerTime, 60000); // Update every minute
+            document.getElementById("next-prayer").innerText = `Next Prayer: ${nextPrayerName}`;
+            document.getElementById("countdown").innerText = `${hoursLeft}:${minutesLeft}`;
+
+            // Display today's prayer times
+            const prayerTimesContainer = document.getElementById("prayer-times");
+            prayerTimesContainer.innerHTML = `
+                <div class="prayer-times">
+                    <h3>Today: ${nextPrayer.date}</h3>
+                    <p>Fajr: ${nextPrayer.fajr}</p>
+                    <p>Dhuhr: ${nextPrayer.dhuhr}</p>
+                    <p>Asr: ${nextPrayer.asr}</p>
+                    <p>Maghrib: ${nextPrayer.maghrib}</p>
+                    <p>Isha: ${nextPrayer.isha}</p>
+                </div>
+            `;
         });
     </script>
-
 </body>
 </html>
