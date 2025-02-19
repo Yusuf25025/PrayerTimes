@@ -60,10 +60,6 @@
             { fajr: "05:14 AM", dhuhr: "12:29 PM", asr: "03:39 PM", maghrib: "06:07 PM", isha: "07:30 PM", date: "02/29" }
         ];
 
-        const currentTime = new Date();
-        const currentHour = currentTime.getHours();
-        const currentMinute = currentTime.getMinutes();
-
         // Function to convert time string to Date object
         function convertToDate(timeStr) {
             const [time, period] = timeStr.split(' ');
@@ -73,11 +69,12 @@
             if (period === "PM" && hours !== 12) newHours += 12;
             if (period === "AM" && hours === 12) newHours = 0;
 
-            return new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate(), newHours, minutes);
+            return new Date(new Date().setHours(newHours, minutes, 0, 0));
         }
 
         // Function to get the next prayer
         function getNextPrayer() {
+            const currentTime = new Date();
             let nextPrayerTime = null;
             let prayerName = '';
 
@@ -103,7 +100,7 @@
             }
 
             if (nextPrayerTime) {
-                const timeLeft = getTimeLeft(nextPrayerTime);
+                const timeLeft = getTimeLeft(nextPrayerTime, currentTime);
                 document.getElementById('next-prayer').innerText = `Next Prayer: ${prayerName}`;
                 document.getElementById('countdown').innerText = timeLeft;
             } else {
@@ -113,7 +110,7 @@
         }
 
         // Function to calculate time left
-        function getTimeLeft(nextPrayerTime) {
+        function getTimeLeft(nextPrayerTime, currentTime) {
             const diff = nextPrayerTime - currentTime;
             const hours = Math.floor(diff / (1000 * 60 * 60));
             const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
@@ -140,6 +137,7 @@
         // Run the functions
         getNextPrayer();
         displayAllPrayers();
+        setInterval(getNextPrayer, 60000); // Update every minute
 
     </script>
 
