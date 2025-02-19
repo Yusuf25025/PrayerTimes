@@ -38,6 +38,13 @@
         <p>Time left: <span id="countdown">--:--</span></p>
     </div>
 
+    <div class="card">
+        <h2>All Prayer Times:</h2>
+        <ul id="all-prayers">
+            <!-- Prayer times will be listed here -->
+        </ul>
+    </div>
+
     <script>
         const prayerTimes = [
             { fajr: "05:24 AM", dhuhr: "12:30 PM", asr: "03:33 PM", maghrib: "05:58 PM", isha: "07:20 PM", date: "02/19" },
@@ -57,42 +64,44 @@
         const currentHour = currentTime.getHours();
         const currentMinute = currentTime.getMinutes();
 
+        // Function to convert time string to Date object
+        function convertToDate(timeStr) {
+            const [time, period] = timeStr.split(' ');
+            const [hours, minutes] = time.split(':').map(num => parseInt(num));
+            let newHours = hours;
+
+            if (period === "PM" && hours !== 12) newHours += 12;
+            if (period === "AM" && hours === 12) newHours = 0;
+
+            return new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate(), newHours, minutes);
+        }
+
+        // Function to get the next prayer
         function getNextPrayer() {
             let nextPrayerTime = null;
             let prayerName = '';
 
-            // Iterate over prayer times
             for (let i = 0; i < prayerTimes.length; i++) {
                 const prayer = prayerTimes[i];
+                const prayers = [
+                    { name: "Fajr", time: convertToDate(prayer.fajr) },
+                    { name: "Dhuhr", time: convertToDate(prayer.dhuhr) },
+                    { name: "Asr", time: convertToDate(prayer.asr) },
+                    { name: "Maghrib", time: convertToDate(prayer.maghrib) },
+                    { name: "Isha", time: convertToDate(prayer.isha) }
+                ];
 
-                const prayerNames = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
-                const prayerHours = [prayer.fajr, prayer.dhuhr, prayer.asr, prayer.maghrib, prayer.isha];
-
-                for (let j = 0; j < prayerHours.length; j++) {
-                    const prayerSplit = prayerHours[j].split(":");
-                    const timeParts = prayerSplit[1].split(" ");
-                    const hour = parseInt(prayerSplit[0]);
-                    const minute = parseInt(timeParts[0]);
-                    const isPM = timeParts[1] === "PM";
-
-                    let formattedHour = hour;
-                    if (isPM && hour !== 12) formattedHour += 12; // Convert PM hours to 24-hour format
-                    if (!isPM && hour === 12) formattedHour = 0; // Convert 12 AM to 0 hour
-
-                    const prayerTime = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate(), formattedHour, minute);
-
-                    // Find the next prayer
-                    if (currentTime < prayerTime) {
-                        nextPrayerTime = prayerTime;
-                        prayerName = prayerNames[j];
+                for (let j = 0; j < prayers.length; j++) {
+                    if (currentTime < prayers[j].time) {
+                        nextPrayerTime = prayers[j].time;
+                        prayerName = prayers[j].name;
                         break;
                     }
                 }
 
-                if (nextPrayerTime) break; // Stop once the next prayer is found
+                if (nextPrayerTime) break;
             }
 
-            // Update the UI
             if (nextPrayerTime) {
                 const timeLeft = getTimeLeft(nextPrayerTime);
                 document.getElementById('next-prayer').innerText = `Next Prayer: ${prayerName}`;
@@ -103,16 +112,34 @@
             }
         }
 
+        // Function to calculate time left
         function getTimeLeft(nextPrayerTime) {
             const diff = nextPrayerTime - currentTime;
             const hours = Math.floor(diff / (1000 * 60 * 60));
             const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-
             return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
         }
 
-        // Run the function to get the next prayer
+        // Display all prayer times
+        function displayAllPrayers() {
+            const prayerList = document.getElementById("all-prayers");
+            prayerTimes.forEach(prayer => {
+                const listItem = document.createElement("li");
+                listItem.innerHTML = `
+                    <strong>${prayer.date}</strong><br>
+                    Fajr: ${prayer.fajr}<br>
+                    Dhuhr: ${prayer.dhuhr}<br>
+                    Asr: ${prayer.asr}<br>
+                    Maghrib: ${prayer.maghrib}<br>
+                    Isha: ${prayer.isha}
+                `;
+                prayerList.appendChild(listItem);
+            });
+        }
+
+        // Run the functions
         getNextPrayer();
+        displayAllPrayers();
 
     </script>
 
