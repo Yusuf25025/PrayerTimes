@@ -20,7 +20,7 @@
             padding: 25px;
             margin: 20px;
             width: 90%;
-            max-width: 500px;
+            max-width: 700px;
             border-radius: 10px;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
             text-align: center;
@@ -33,27 +33,37 @@
             color: #333;
             margin-bottom: 15px;
         }
-        .prayer-time {
-            font-size: 20px;
-            margin-bottom: 10px;
-        }
         .time-left {
             font-size: 22px;
             color: #E74C3C;
             font-weight: bold;
         }
-        .all-prayers ul {
-            list-style-type: none;
-            padding: 0;
+        .calendar {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
         }
-        .all-prayers li {
-            padding: 10px 0;
-            border-bottom: 1px solid #ddd;
-            font-size: 18px;
+        .calendar th, .calendar td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
         }
-        .time {
+        .calendar th {
+            background-color: #f0f0f0;
             font-size: 16px;
             color: #555;
+        }
+        .calendar td {
+            font-size: 14px;
+            color: #333;
+        }
+        .day {
+            font-weight: bold;
+            color: #333;
+        }
+        .prayer-time {
+            margin-top: 5px;
+            font-size: 12px;
         }
     </style>
 </head>
@@ -65,11 +75,24 @@
         <p class="time-left" id="countdown">--:--</p>
     </div>
 
-    <div class="card all-prayers">
-        <h2>All Prayer Times:</h2>
-        <ul id="all-prayers">
-            <!-- Prayer times will be listed here -->
-        </ul>
+    <div class="card">
+        <h2>Prayer Calendar:</h2>
+        <table class="calendar" id="calendar">
+            <thead>
+                <tr>
+                    <th>Sun</th>
+                    <th>Mon</th>
+                    <th>Tue</th>
+                    <th>Wed</th>
+                    <th>Thu</th>
+                    <th>Fri</th>
+                    <th>Sat</th>
+                </tr>
+            </thead>
+            <tbody id="calendar-body">
+                <!-- Calendar dates will be populated here -->
+            </tbody>
+        </table>
     </div>
 
     <script>
@@ -144,28 +167,43 @@
             return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
         }
 
-        // Display all prayer times
-        function displayAllPrayers() {
-            const prayerList = document.getElementById("all-prayers");
-            prayerTimes.forEach(prayer => {
-                const listItem = document.createElement("li");
-                listItem.innerHTML = `
-                    <strong>${prayer.date}</strong><br>
-                    Fajr: <span class="time">${prayer.fajr}</span><br>
-                    Dhuhr: <span class="time">${prayer.dhuhr}</span><br>
-                    Asr: <span class="time">${prayer.asr}</span><br>
-                    Maghrib: <span class="time">${prayer.maghrib}</span><br>
-                    Isha: <span class="time">${prayer.isha}</span>
-                `;
-                prayerList.appendChild(listItem);
-            });
+        // Display the prayer calendar
+        function displayCalendar() {
+            const calendarBody = document.getElementById("calendar-body");
+            const currentDate = new Date();
+            const startDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
+            const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
+            
+            let dayCount = 1;
+            let rows = '';
+
+            for (let i = 0; i < 5; i++) {
+                rows += '<tr>';
+                for (let j = 0; j < 7; j++) {
+                    if (i === 0 && j < startDay || dayCount > daysInMonth) {
+                        rows += '<td></td>';
+                    } else {
+                        const prayer = prayerTimes.find(p => p.date === `02/${dayCount < 10 ? '0' + dayCount : dayCount}`);
+                        rows += `<td>
+                                    <div class="day">${dayCount}</div>
+                                    ${prayer ? `
+                                        <div class="prayer-time">Fajr: ${prayer.fajr}</div>
+                                        <div class="prayer-time">Dhuhr: ${prayer.dhuhr}</div>
+                                        <div class="prayer-time">Asr: ${prayer.asr}</div>
+                                        <div class="prayer-time">Maghrib: ${prayer.maghrib}</div>
+                                        <div class="prayer-time">Isha: ${prayer.isha}</div>` : ''}
+                                 </td>`;
+                        dayCount++;
+                    }
+                }
+                rows += '</tr>';
+            }
+            calendarBody.innerHTML = rows;
         }
 
-        // Run the functions
+        setInterval(getNextPrayer, 60000);
+        displayCalendar();
         getNextPrayer();
-        displayAllPrayers();
-        setInterval(getNextPrayer, 60000); // Update every minute
     </script>
-
 </body>
 </html>
