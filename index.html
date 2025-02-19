@@ -22,23 +22,6 @@
             border-radius: 5px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-        .calendar {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 10px;
-            margin-top: 30px;
-        }
-        .calendar-day {
-            padding: 10px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            cursor: pointer;
-        }
-        .calendar-day:hover {
-            background-color: #e0e0e0;
-        }
     </style>
 </head>
 <body>
@@ -49,8 +32,6 @@
     <div id="countdown">--:--</div>
 
     <div id="prayer-times"></div>
-
-    <div class="calendar" id="calendar"></div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -79,7 +60,15 @@
                     maghrib: "06:00 PM",
                     isha: "07:22 PM",
                 },
-                // Add all the other dates and times here
+                {
+                    date: "02/22",
+                    fajr: "05:21 AM",
+                    dhuhr: "12:30 PM",
+                    asr: "03:35 PM",
+                    maghrib: "06:01 PM",
+                    isha: "07:23 PM",
+                },
+                // Add more dates and prayer times
             ];
 
             const currentTime = new Date();
@@ -117,9 +106,14 @@
                 });
             });
 
+            // Check if there are no prayer times left today, and set Fajr as the next prayer
             if (!nextPrayer) {
-                nextPrayerName = "None Today";
-                nextPrayerTime = new Date(currentTime);
+                // Set the next prayer for Fajr on the next day
+                const nextDay = new Date(currentTime);
+                nextDay.setDate(currentTime.getDate() + 1);
+                nextPrayer = prayerTimes.find(prayer => prayer.date === `02/${nextDay.getDate() < 10 ? '0' + nextDay.getDate() : nextDay.getDate()}`);
+                nextPrayerName = "Fajr";
+                nextPrayerTime = to24HourFormat(nextPrayer.fajr);
             }
 
             // Calculate time left for next prayer
@@ -144,21 +138,6 @@
                     </div>
                 `;
                 prayerTimesContainer.innerHTML += prayerHTML;
-            });
-
-            // Generate calendar
-            const calendarContainer = document.getElementById("calendar");
-            prayerTimes.forEach(prayer => {
-                const calendarDay = document.createElement("div");
-                calendarDay.classList.add("calendar-day");
-                calendarDay.innerHTML = `
-                    <strong>${prayer.date}</strong>
-                    <br>
-                    Fajr: ${prayer.fajr}
-                    <br>
-                    Maghrib: ${prayer.maghrib}
-                `;
-                calendarContainer.appendChild(calendarDay);
             });
         });
     </script>
