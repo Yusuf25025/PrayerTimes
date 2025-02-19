@@ -53,111 +53,113 @@
     <div class="calendar" id="calendar"></div>
 
     <script>
-        const prayerTimes = [
-            {
-                date: "02/19",
-                fajr: "05:24 AM",
-                dhuhr: "12:30 PM",
-                asr: "03:33 PM",
-                maghrib: "05:58 PM",
-                isha: "07:20 PM",
-            },
-            {
-                date: "02/20",
-                fajr: "05:23 AM",
-                dhuhr: "12:30 PM",
-                asr: "03:34 PM",
-                maghrib: "05:59 PM",
-                isha: "07:21 PM",
-            },
-            {
-                date: "02/21",
-                fajr: "05:22 AM",
-                dhuhr: "12:30 PM",
-                asr: "03:34 PM",
-                maghrib: "06:00 PM",
-                isha: "07:22 PM",
-            },
-            // Add all the other dates and times here
-        ];
-
-        const currentTime = new Date();
-        let nextPrayer = null;
-        let nextPrayerTime = null;
-        let nextPrayerName = "";
-
-        // Helper function to convert time to 24-hour format and compare it
-        function to24HourFormat(timeStr) {
-            const [time, modifier] = timeStr.split(" ");
-            let [hours, minutes] = time.split(":").map(num => parseInt(num, 10));
-
-            if (modifier === "PM" && hours !== 12) hours += 12;
-            if (modifier === "AM" && hours === 12) hours = 0;
-
-            return new Date(currentTime.toDateString() + ` ${hours}:${minutes}:00`);
-        }
-
-        // Loop through the prayer times and find the next prayer
-        prayerTimes.forEach(prayer => {
-            const todayPrayerTimes = [
-                { name: "Fajr", time: to24HourFormat(prayer.fajr) },
-                { name: "Dhuhr", time: to24HourFormat(prayer.dhuhr) },
-                { name: "Asr", time: to24HourFormat(prayer.asr) },
-                { name: "Maghrib", time: to24HourFormat(prayer.maghrib) },
-                { name: "Isha", time: to24HourFormat(prayer.isha) }
+        document.addEventListener("DOMContentLoaded", function() {
+            const prayerTimes = [
+                {
+                    date: "02/19",
+                    fajr: "05:24 AM",
+                    dhuhr: "12:30 PM",
+                    asr: "03:33 PM",
+                    maghrib: "05:58 PM",
+                    isha: "07:20 PM",
+                },
+                {
+                    date: "02/20",
+                    fajr: "05:23 AM",
+                    dhuhr: "12:30 PM",
+                    asr: "03:34 PM",
+                    maghrib: "05:59 PM",
+                    isha: "07:21 PM",
+                },
+                {
+                    date: "02/21",
+                    fajr: "05:22 AM",
+                    dhuhr: "12:30 PM",
+                    asr: "03:34 PM",
+                    maghrib: "06:00 PM",
+                    isha: "07:22 PM",
+                },
+                // Add all the other dates and times here
             ];
 
-            todayPrayerTimes.forEach(prayerTime => {
-                if (currentTime < prayerTime.time && (!nextPrayerTime || prayerTime.time < nextPrayerTime)) {
-                    nextPrayerTime = prayerTime.time;
-                    nextPrayer = prayer;
-                    nextPrayerName = prayerTime.name;
-                }
+            const currentTime = new Date();
+            let nextPrayer = null;
+            let nextPrayerTime = null;
+            let nextPrayerName = "";
+
+            // Helper function to convert time to 24-hour format and compare it
+            function to24HourFormat(timeStr) {
+                const [time, modifier] = timeStr.split(" ");
+                let [hours, minutes] = time.split(":").map(num => parseInt(num, 10));
+
+                if (modifier === "PM" && hours !== 12) hours += 12;
+                if (modifier === "AM" && hours === 12) hours = 0;
+
+                return new Date(currentTime.toDateString() + ` ${hours}:${minutes}:00`);
+            }
+
+            // Loop through the prayer times and find the next prayer
+            prayerTimes.forEach(prayer => {
+                const todayPrayerTimes = [
+                    { name: "Fajr", time: to24HourFormat(prayer.fajr) },
+                    { name: "Dhuhr", time: to24HourFormat(prayer.dhuhr) },
+                    { name: "Asr", time: to24HourFormat(prayer.asr) },
+                    { name: "Maghrib", time: to24HourFormat(prayer.maghrib) },
+                    { name: "Isha", time: to24HourFormat(prayer.isha) }
+                ];
+
+                todayPrayerTimes.forEach(prayerTime => {
+                    if (currentTime < prayerTime.time && (!nextPrayerTime || prayerTime.time < nextPrayerTime)) {
+                        nextPrayerTime = prayerTime.time;
+                        nextPrayer = prayer;
+                        nextPrayerName = prayerTime.name;
+                    }
+                });
             });
-        });
 
-        if (!nextPrayer) {
-            nextPrayerName = "None Today";
-            nextPrayerTime = new Date(currentTime);
-        }
+            if (!nextPrayer) {
+                nextPrayerName = "None Today";
+                nextPrayerTime = new Date(currentTime);
+            }
 
-        // Calculate time left for next prayer
-        const timeLeft = new Date(nextPrayerTime - currentTime);
-        const hoursLeft = String(timeLeft.getUTCHours()).padStart(2, "0");
-        const minutesLeft = String(timeLeft.getUTCMinutes()).padStart(2, "0");
+            // Calculate time left for next prayer
+            const timeLeft = new Date(nextPrayerTime - currentTime);
+            const hoursLeft = String(timeLeft.getUTCHours()).padStart(2, "0");
+            const minutesLeft = String(timeLeft.getUTCMinutes()).padStart(2, "0");
 
-        document.getElementById("next-prayer").innerText = nextPrayerName;
-        document.getElementById("countdown").innerText = `${hoursLeft}:${minutesLeft}`;
+            document.getElementById("next-prayer").innerText = nextPrayerName;
+            document.getElementById("countdown").innerText = `${hoursLeft}:${minutesLeft}`;
 
-        // Display all prayer times for the day
-        const prayerTimesContainer = document.getElementById("prayer-times");
-        prayerTimes.forEach(prayer => {
-            const prayerHTML = `
-                <div class="prayer-times">
-                    <h3>${prayer.date}</h3>
-                    <p>Fajr: ${prayer.fajr}</p>
-                    <p>Dhuhr: ${prayer.dhuhr}</p>
-                    <p>Asr: ${prayer.asr}</p>
-                    <p>Maghrib: ${prayer.maghrib}</p>
-                    <p>Isha: ${prayer.isha}</p>
-                </div>
-            `;
-            prayerTimesContainer.innerHTML += prayerHTML;
-        });
+            // Display all prayer times for the day
+            const prayerTimesContainer = document.getElementById("prayer-times");
+            prayerTimes.forEach(prayer => {
+                const prayerHTML = `
+                    <div class="prayer-times">
+                        <h3>${prayer.date}</h3>
+                        <p>Fajr: ${prayer.fajr}</p>
+                        <p>Dhuhr: ${prayer.dhuhr}</p>
+                        <p>Asr: ${prayer.asr}</p>
+                        <p>Maghrib: ${prayer.maghrib}</p>
+                        <p>Isha: ${prayer.isha}</p>
+                    </div>
+                `;
+                prayerTimesContainer.innerHTML += prayerHTML;
+            });
 
-        // Generate calendar
-        const calendarContainer = document.getElementById("calendar");
-        prayerTimes.forEach(prayer => {
-            const calendarDay = document.createElement("div");
-            calendarDay.classList.add("calendar-day");
-            calendarDay.innerHTML = `
-                <strong>${prayer.date}</strong>
-                <br>
-                Fajr: ${prayer.fajr}
-                <br>
-                Maghrib: ${prayer.maghrib}
-            `;
-            calendarContainer.appendChild(calendarDay);
+            // Generate calendar
+            const calendarContainer = document.getElementById("calendar");
+            prayerTimes.forEach(prayer => {
+                const calendarDay = document.createElement("div");
+                calendarDay.classList.add("calendar-day");
+                calendarDay.innerHTML = `
+                    <strong>${prayer.date}</strong>
+                    <br>
+                    Fajr: ${prayer.fajr}
+                    <br>
+                    Maghrib: ${prayer.maghrib}
+                `;
+                calendarContainer.appendChild(calendarDay);
+            });
         });
     </script>
 </body>
