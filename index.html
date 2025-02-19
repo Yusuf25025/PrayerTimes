@@ -68,7 +68,62 @@
                     maghrib: "06:01 PM",
                     isha: "07:23 PM",
                 },
-                // Add more dates and prayer times
+                {
+                    date: "02/23",
+                    fajr: "05:20 AM",
+                    dhuhr: "12:30 PM",
+                    asr: "03:36 PM",
+                    maghrib: "06:02 PM",
+                    isha: "07:24 PM",
+                },
+                {
+                    date: "02/24",
+                    fajr: "05:19 AM",
+                    dhuhr: "12:30 PM",
+                    asr: "03:36 PM",
+                    maghrib: "06:03 PM",
+                    isha: "07:25 PM",
+                },
+                {
+                    date: "02/25",
+                    fajr: "05:18 AM",
+                    dhuhr: "12:29 PM",
+                    asr: "03:37 PM",
+                    maghrib: "06:04 PM",
+                    isha: "07:27 PM",
+                },
+                {
+                    date: "02/26",
+                    fajr: "05:17 AM",
+                    dhuhr: "12:29 PM",
+                    asr: "03:38 PM",
+                    maghrib: "06:05 PM",
+                    isha: "07:28 PM",
+                },
+                {
+                    date: "02/27",
+                    fajr: "05:16 AM",
+                    dhuhr: "12:29 PM",
+                    asr: "03:38 PM",
+                    maghrib: "06:06 PM",
+                    isha: "07:29 PM",
+                },
+                {
+                    date: "02/28",
+                    fajr: "05:15 AM",
+                    dhuhr: "12:29 PM",
+                    asr: "03:39 PM",
+                    maghrib: "06:07 PM",
+                    isha: "07:30 PM",
+                },
+                {
+                    date: "02/29",
+                    fajr: "05:14 AM",
+                    dhuhr: "12:29 PM",
+                    asr: "03:39 PM",
+                    maghrib: "06:07 PM",
+                    isha: "07:30 PM",
+                }
             ];
 
             const currentTime = new Date();
@@ -106,9 +161,8 @@
                 });
             });
 
-            // Check if there are no prayer times left today, and set Fajr as the next prayer
+            // If there's no prayer time left today, set the next prayer to Fajr of the next day
             if (!nextPrayer) {
-                // Set the next prayer for Fajr on the next day
                 const nextDay = new Date(currentTime);
                 nextDay.setDate(currentTime.getDate() + 1);
                 nextPrayer = prayerTimes.find(prayer => prayer.date === `02/${nextDay.getDate() < 10 ? '0' + nextDay.getDate() : nextDay.getDate()}`);
@@ -124,7 +178,7 @@
             document.getElementById("next-prayer").innerText = nextPrayerName;
             document.getElementById("countdown").innerText = `${hoursLeft}:${minutesLeft}`;
 
-            // Display all prayer times for the day
+            // Display all prayer times for the upcoming days
             const prayerTimesContainer = document.getElementById("prayer-times");
             prayerTimes.forEach(prayer => {
                 const prayerHTML = `
