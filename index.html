@@ -136,4 +136,29 @@
                 <div class="prayer-times">
                     <h3>${prayer.date}</h3>
                     <p>Fajr: ${prayer.fajr}</p>
-                    <p>Dhuhr: ${prayer
+                    <p>Dhuhr: ${prayer.dhuhr}</p>
+                    <p>Asr: ${prayer.asr}</p>
+                    <p>Maghrib: ${prayer.maghrib}</p>
+                    <p>Isha: ${prayer.isha}</p>
+                </div>
+            `;
+            prayerTimesContainer.innerHTML += prayerHTML;
+        });
+
+        // Generate calendar
+        const calendarContainer = document.getElementById("calendar");
+        prayerTimes.forEach(prayer => {
+            const calendarDay = document.createElement("div");
+            calendarDay.classList.add("calendar-day");
+            calendarDay.innerHTML = `
+                <strong>${prayer.date}</strong>
+                <br>
+                Fajr: ${prayer.fajr}
+                <br>
+                Maghrib: ${prayer.maghrib}
+            `;
+            calendarContainer.appendChild(calendarDay);
+        });
+    </script>
+</body>
+</html>
