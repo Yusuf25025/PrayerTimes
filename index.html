@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دەمێن بانگا</title>
+    <title>Prayer Times</title>
     <style>
         /* General styling */
         body {
-            font-family: 'Noto Sans', Arial, sans-serif;
+            font-family: 'Noto Sans Kurdish', 'Arial', sans-serif;
             text-align: center;
             background: url('https://images.unsplash.com/photo-1512632578888-169bbbc64f33?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat center center/cover;
-            background-attachment: fixed;
             color: #f5f5f5;
             padding: 20px;
             display: flex;
@@ -61,21 +60,16 @@
             font-size: 18px;
             margin: 5px 0;
         }
-
-        /* Aligning the content to the center */
-        #prayer-times {
-            text-align: center;
-        }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kurdish:wght@700&display=swap" rel="stylesheet">
 </head>
 <body>
 
     <h1>دەمێن بانگا</h1>
 
-    <div id="next-prayer">لێدوانە ئەمڕۆ: تێڕوانین</div>
+    <div id="next-prayer">بانگێ بهێت... </div>
     <div id="countdown">--:--</div>
-    <div id="maghrib-countdown">--:--</div>
+    <div id="maghrib-countdown">مەغرەب: --:--</div>
 
     <div id="prayer-times"></div>
 
@@ -84,91 +78,91 @@
             const prayerTimes = [
                 {
                     date: "02/19",
-                    fajr: "05:24 AM",
-                    dhuhr: "12:30 PM",
-                    asr: "03:33 PM",
-                    maghrib: "05:58 PM",
-                    isha: "07:20 PM",
+                    fajr: "05:24",
+                    dhuhr: "12:30",
+                    asr: "03:33",
+                    maghrib: "05:58",
+                    isha: "07:20",
                 },
                 {
                     date: "02/20",
-                    fajr: "05:23 AM",
-                    dhuhr: "12:30 PM",
-                    asr: "03:34 PM",
-                    maghrib: "05:59 PM",
-                    isha: "07:21 PM",
+                    fajr: "05:23",
+                    dhuhr: "12:30",
+                    asr: "03:34",
+                    maghrib: "05:59",
+                    isha: "07:21",
                 },
                 {
                     date: "02/21",
-                    fajr: "05:22 AM",
-                    dhuhr: "12:30 PM",
-                    asr: "03:34 PM",
-                    maghrib: "06:00 PM",
-                    isha: "07:22 PM",
+                    fajr: "05:22",
+                    dhuhr: "12:30",
+                    asr: "03:34",
+                    maghrib: "06:00",
+                    isha: "07:22",
                 },
                 {
                     date: "02/22",
-                    fajr: "05:21 AM",
-                    dhuhr: "12:30 PM",
-                    asr: "03:35 PM",
-                    maghrib: "06:01 PM",
-                    isha: "07:23 PM",
+                    fajr: "05:21",
+                    dhuhr: "12:30",
+                    asr: "03:35",
+                    maghrib: "06:01",
+                    isha: "07:23",
                 },
                 {
                     date: "02/23",
-                    fajr: "05:20 AM",
-                    dhuhr: "12:30 PM",
-                    asr: "03:36 PM",
-                    maghrib: "06:02 PM",
-                    isha: "07:24 PM",
+                    fajr: "05:20",
+                    dhuhr: "12:30",
+                    asr: "03:36",
+                    maghrib: "06:02",
+                    isha: "07:24",
                 },
                 {
                     date: "02/24",
-                    fajr: "05:19 AM",
-                    dhuhr: "12:30 PM",
-                    asr: "03:36 PM",
-                    maghrib: "06:03 PM",
-                    isha: "07:25 PM",
+                    fajr: "05:19",
+                    dhuhr: "12:30",
+                    asr: "03:36",
+                    maghrib: "06:03",
+                    isha: "07:25",
                 },
                 {
                     date: "02/25",
-                    fajr: "05:18 AM",
-                    dhuhr: "12:29 PM",
-                    asr: "03:37 PM",
-                    maghrib: "06:04 PM",
-                    isha: "07:27 PM",
+                    fajr: "05:18",
+                    dhuhr: "12:29",
+                    asr: "03:37",
+                    maghrib: "06:04",
+                    isha: "07:27",
                 },
                 {
                     date: "02/26",
-                    fajr: "05:17 AM",
-                    dhuhr: "12:29 PM",
-                    asr: "03:38 PM",
-                    maghrib: "06:05 PM",
-                    isha: "07:28 PM",
+                    fajr: "05:17",
+                    dhuhr: "12:29",
+                    asr: "03:38",
+                    maghrib: "06:05",
+                    isha: "07:28",
                 },
                 {
                     date: "02/27",
-                    fajr: "05:16 AM",
-                    dhuhr: "12:29 PM",
-                    asr: "03:38 PM",
-                    maghrib: "06:06 PM",
-                    isha: "07:29 PM",
+                    fajr: "05:16",
+                    dhuhr: "12:29",
+                    asr: "03:38",
+                    maghrib: "06:06",
+                    isha: "07:29",
                 },
                 {
                     date: "02/28",
-                    fajr: "05:15 AM",
-                    dhuhr: "12:29 PM",
-                    asr: "03:39 PM",
-                    maghrib: "06:07 PM",
-                    isha: "07:30 PM",
+                    fajr: "05:15",
+                    dhuhr: "12:29",
+                    asr: "03:39",
+                    maghrib: "06:07",
+                    isha: "07:30",
                 },
                 {
                     date: "02/29",
-                    fajr: "05:14 AM",
-                    dhuhr: "12:29 PM",
-                    asr: "03:39 PM",
-                    maghrib: "06:07 PM",
-                    isha: "07:30 PM",
+                    fajr: "05:14",
+                    dhuhr: "12:29",
+                    asr: "03:39",
+                    maghrib: "06:07",
+                    isha: "07:30",
                 }
             ];
 
@@ -187,13 +181,15 @@
             let maghribTime = null;
             let maghribPassed = false;
 
+            function to12HourFormat(timeStr) {
+                const [hours, minutes] = timeStr.split(":").map(num => parseInt(num, 10));
+                let displayHour = hours % 12;
+                if (displayHour === 0) displayHour = 12;
+                return `${displayHour}:${String(minutes).padStart(2, "0")}`;
+            }
+
             function to24HourFormat(timeStr) {
-                const [time, modifier] = timeStr.split(" ");
-                let [hours, minutes] = time.split(":").map(num => parseInt(num, 10));
-
-                if (modifier === "PM" && hours !== 12) hours += 12;
-                if (modifier === "AM" && hours === 12) hours = 0;
-
+                const [hours, minutes] = timeStr.split(":").map(num => parseInt(num, 10));
                 return new Date(currentTime.toDateString() + ` ${hours}:${minutes}:00`);
             }
 
@@ -213,14 +209,12 @@
                         nextPrayerName = prayerTime.name;
                     }
 
-                    // Check for Maghrib
                     if (prayerTime.name === prayerNames.maghrib) {
                         maghribTime = prayerTime.time;
                     }
                 });
             });
 
-            // If maghrib has passed, set up Fajr countdown
             if (currentTime > maghribTime) {
                 maghribPassed = true;
                 nextPrayer = prayerTimes[0]; // Set the next Fajr prayer
@@ -237,59 +231,21 @@
 
                 document.getElementById("countdown").innerText = `${hoursLeft}:${minutesLeft}:${secondsLeft}`;
 
-                // Maghrib countdown
                 const maghribLeft = new Date(maghribTime - now);
                 const maghribHours = String(maghribLeft.getUTCHours()).padStart(2, "0");
                 const maghribMinutes = String(maghribLeft.getUTCMinutes()).padStart(2, "0");
                 const maghribSeconds = String(maghribLeft.getUTCSeconds()).padStart(2, "0");
 
-                document.getElementById("maghrib-countdown").innerText = `${maghribHours}:${maghribMinutes}:${maghribSeconds}`;
+                document.getElementById("maghrib-countdown").innerText = `مەغرەب: ${maghribHours}:${maghribMinutes}:${maghribSeconds}`;
 
-                if (now > maghribTime) {
-                    document.getElementById("maghrib-countdown").style.display = "none";
+                if (timeLeft <= 0) {
+                    location.reload();
                 }
             }
 
-            function updatePrayerTimesDisplay() {
-                const prayerTimesElement = document.getElementById("prayer-times");
-                prayerTimesElement.innerHTML = '';
-
-                prayerTimes.forEach(prayer => {
-                    const prayerElement = document.createElement("div");
-                    prayerElement.classList.add("prayer-times");
-
-                    const prayerDate = document.createElement("h3");
-                    prayerDate.innerText = prayer.date;
-                    prayerElement.appendChild(prayerDate);
-
-                    const fajr = document.createElement("p");
-                    fajr.innerText = `سپێدە: ${prayer.fajr}`;
-                    prayerElement.appendChild(fajr);
-
-                    const dhuhr = document.createElement("p");
-                    dhuhr.innerText = `نیڤرو: ${prayer.dhuhr}`;
-                    prayerElement.appendChild(dhuhr);
-
-                    const asr = document.createElement("p");
-                    asr.innerText = `ئێڤاری: ${prayer.asr}`;
-                    prayerElement.appendChild(asr);
-
-                    const maghrib = document.createElement("p");
-                    maghrib.innerText = `مەغرەب: ${prayer.maghrib}`;
-                    prayerElement.appendChild(maghrib);
-
-                    const isha = document.createElement("p");
-                    isha.innerText = `عەیشا: ${prayer.isha}`;
-                    prayerElement.appendChild(isha);
-
-                    prayerTimesElement.appendChild(prayerElement);
-                });
-            }
-
+            document.getElementById("next-prayer").innerText = `بانگێ بهێت: ${nextPrayerName}`;
             setInterval(updateCountdown, 1000);
-            updatePrayerTimesDisplay();
         });
     </script>
-
 </body>
 </html>
