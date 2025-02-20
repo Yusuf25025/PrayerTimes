@@ -10,12 +10,14 @@
             font-family: Arial, sans-serif;
             text-align: center;
             background: url('https://source.unsplash.com/1600x900/?mosque') no-repeat center center/cover;
+            background-size: cover;
             color: #f5f5f5;
             padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            margin: 0;
         }
 
         h1 {
@@ -61,52 +63,6 @@
             margin: 5px 0;
         }
 
-        /* For React part */
-        .flex {
-            display: flex;
-        }
-        .flex-col {
-            flex-direction: column;
-        }
-        .items-center {
-            align-items: center;
-        }
-        .justify-center {
-            justify-content: center;
-        }
-        .min-h-screen {
-            min-height: 100vh;
-        }
-        .bg-gray-900 {
-            background-color: #1a1a1a;
-        }
-        .text-white {
-            color: white;
-        }
-        .p-6 {
-            padding: 1.5rem;
-        }
-        .relative {
-            position: relative;
-        }
-        .bg-opacity-75 {
-            background-color: rgba(0, 0, 0, 0.75);
-        }
-        .rounded-2xl {
-            border-radius: 1.5rem;
-        }
-        .shadow-lg {
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-        }
-        .text-xl {
-            font-size: 1.25rem;
-        }
-        .font-bold {
-            font-weight: bold;
-        }
-        .font-semibold {
-            font-weight: semi-bold;
-        }
     </style>
 </head>
 <body>
@@ -115,46 +71,6 @@
 
     <div id="next-prayer">Loading...</div>
     <div id="countdown">--:--</div>
-
-    <div id="prayer-times"></div>
-
-    <div class="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white p-6 relative">
-        <div class="absolute inset-0 bg-cover bg-center opacity-10"
-             style="background-image: url('https://source.unsplash.com/1600x900/?mosque')">
-        </div>
-
-        <h1 class="text-4xl font-bold mb-4 relative z-10">Prayer Times</h1>
-        <p class="mb-6 relative z-10">02/20</p>
-
-        <div class="bg-gray-800 bg-opacity-75 p-6 rounded-2xl shadow-lg relative z-10">
-            <div class="grid grid-cols-2 gap-4 text-lg text-center">
-                <div class="flex flex-col items-center">
-                    <span class="font-semibold text-lg">Fajr</span>
-                    <span class="text-xl font-bold">05:23 AM</span>
-                </div>
-                <div class="flex flex-col items-center">
-                    <span class="font-semibold text-lg">Dhuhr</span>
-                    <span class="text-xl font-bold">12:30 PM</span>
-                </div>
-                <div class="flex flex-col items-center">
-                    <span class="font-semibold text-lg">Asr</span>
-                    <span class="text-xl font-bold">03:34 PM</span>
-                </div>
-                <div class="flex flex-col items-center">
-                    <span class="font-semibold text-lg">Maghrib</span>
-                    <span class="text-xl font-bold">05:59 PM</span>
-                </div>
-                <div class="flex flex-col items-center">
-                    <span class="font-semibold text-lg">Isha</span>
-                    <span class="text-xl font-bold">07:21 PM</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="absolute bottom-6 flex justify-center w-full">
-            <img src="/mosque-icon.png" alt="Mosque" class="w-16 h-16 opacity-80" />
-        </div>
-    </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -235,25 +151,6 @@
             document.getElementById("next-prayer").innerText = `Next: ${nextPrayerName}`;
             updateCountdown();
             setInterval(updateCountdown, 1000);
-
-            const prayerTimesContainer = document.getElementById("prayer-times");
-            const today = currentTime.toLocaleDateString("en-US", { month: '2-digit', day: '2-digit' });
-
-            prayerTimes.forEach(prayer => {
-                if (prayer.date === today) {
-                    const prayerHTML = `
-                        <div class="prayer-times">
-                            <h3>${prayer.date}</h3>
-                            <p>Fajr: ${prayer.fajr}</p>
-                            <p>Dhuhr: ${prayer.dhuhr}</p>
-                            <p>Asr: ${prayer.asr}</p>
-                            <p>Maghrib: ${prayer.maghrib}</p>
-                            <p>Isha: ${prayer.isha}</p>
-                        </div>
-                    `;
-                    prayerTimesContainer.innerHTML += prayerHTML;
-                }
-            });
         });
     </script>
 </body>
