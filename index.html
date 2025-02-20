@@ -71,6 +71,12 @@
         .countdown {
             margin-top: 10px;
         }
+
+        body {
+            background-image: url('https://c4.wallpaperflare.com/wallpaper/839/873/66/photography-nature-landscape-mosque-wallpaper-preview.jpg');
+            background-size: cover;
+            background-position: center;
+        }
     </style>
 </head>
 <body>
@@ -90,8 +96,6 @@
         </ul>
     </div>
 </div>
-
-<div class="background" id="background"></div>
 
 <script>
     const prayerTimes = {
@@ -139,23 +143,6 @@
         }
     };
 
-    const updateBackground = () => {
-        const currentTime = new Date();
-        const hour = currentTime.getHours();
-        let backgroundImage = "url('https://c4.wallpaperflare.com/wallpaper/839/873/66/photography-nature-landscape-mosque-wallpaper-preview.jpg')";
-
-        // Change background based on hour
-        if (hour >= 5 && hour < 12) {
-            backgroundImage = "url('https://your-morning-image-url.jpg')";
-        } else if (hour >= 12 && hour < 18) {
-            backgroundImage = "url('https://your-afternoon-image-url.jpg')";
-        } else {
-            backgroundImage = "url('https://your-night-image-url.jpg')";
-        }
-
-        document.getElementById("background").style.backgroundImage = backgroundImage;
-    };
-
     const updatePrayerSchedule = () => {
         const scheduleElement = document.getElementById("todaySchedule");
         scheduleElement.innerHTML = `
@@ -169,12 +156,10 @@
 
     setInterval(() => {
         updateNextPrayer();
-        updateBackground();
         updatePrayerSchedule();
     }, 1000);
 
     updateNextPrayer();
-    updateBackground();
     updatePrayerSchedule();
 </script>
 
