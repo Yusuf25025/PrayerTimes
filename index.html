@@ -231,14 +231,17 @@
                 const minutesLeft = String(timeLeft.getUTCMinutes()).padStart(2, "0");
                 const secondsLeft = String(timeLeft.getUTCSeconds()).padStart(2, "0");
 
-                document.getElementById("countdown").textContent = `${hoursLeft}:${minutesLeft}:${secondsLeft}`;
+                document.getElementById("countdown").textContent = `بانگێ بهێت: ${hoursLeft}:${minutesLeft}:${secondsLeft}`;
             }
 
             function updateMaghribCountdown() {
-                const maghribTimeLeft = new Date(maghribTime - new Date());
-                const maghribHours = String(maghribTimeLeft.getUTCHours()).padStart(2, "0");
-                const maghribMinutes = String(maghribTimeLeft.getUTCMinutes()).padStart(2, "0");
-                document.getElementById("maghrib-countdown").textContent = `مەغرەب: ${maghribHours}:${maghribMinutes}`;
+                const now = new Date();
+                const timeLeft = new Date(maghribTime - now);
+                const hoursLeft = String(timeLeft.getUTCHours()).padStart(2, "0");
+                const minutesLeft = String(timeLeft.getUTCMinutes()).padStart(2, "0");
+                const secondsLeft = String(timeLeft.getUTCSeconds()).padStart(2, "0");
+
+                document.getElementById("maghrib-countdown").textContent = `مەغرەب: ${hoursLeft}:${minutesLeft}:${secondsLeft}`;
             }
 
             function updatePrayerTimes() {
