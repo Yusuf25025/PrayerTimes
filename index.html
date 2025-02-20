@@ -26,7 +26,7 @@
             font-weight: bold;
         }
 
-        #next-prayer, #countdown {
+        #next-prayer, #countdown, #maghrib-countdown {
             font-size: 24px;
             font-weight: bold;
             margin: 10px 0;
@@ -35,7 +35,7 @@
             border-radius: 8px;
         }
 
-        #countdown {
+        #countdown, #maghrib-countdown {
             font-size: 30px;
             color: #FFD700;
         }
@@ -71,6 +71,7 @@
 
     <div id="next-prayer">بانگێ بهێت: سپێدە</div>
     <div id="countdown">--:--</div>
+    <div id="maghrib-countdown"></div>
 
     <div class="prayer-times-container">
         <div id="prayer-times" class="prayer-times"></div>
@@ -138,6 +139,23 @@
                 let seconds = timeDiff % 60;
                 document.getElementById("next-prayer").innerText = `بانگێ بهێت: ${prayerNames[nextPrayer]}`;
                 document.getElementById("countdown").innerText = `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+                if (nextPrayer === "fajr") {
+                    let [maghribHours, maghribMinutes] = prayer["maghrib"].split(":").map(Number);
+                    let maghribTime = new Date();
+                    maghribTime.setHours(maghribHours, maghribMinutes, 0, 0);
+                    if (now < maghribTime) {
+                        let maghribDiff = Math.floor((maghribTime - now) / 1000);
+                        let mHours = Math.floor(maghribDiff / 3600);
+                        let mMinutes = Math.floor((maghribDiff % 3600) / 60);
+                        let mSeconds = maghribDiff % 60;
+                        document.getElementById("maghrib-countdown").innerText = `مەغرەب: ${mHours}:${mMinutes.toString().padStart(2, '0')}:${mSeconds.toString().padStart(2, '0')}`;
+                    } else {
+                        document.getElementById("maghrib-countdown").innerText = "";
+                    }
+                } else {
+                    document.getElementById("maghrib-countdown").innerText = "";
+                }
             }
 
             updatePrayerTimes();
