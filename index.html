@@ -5,41 +5,62 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prayer Times</title>
     <style>
+        /* General styling */
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background-color: #f7f7f7;
+            background: url('https://source.unsplash.com/1600x900/?mosque') no-repeat center center/cover;
+            color: #f5f5f5;
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
         }
+
+        h1 {
+            font-size: 28px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
         #next-prayer, #countdown {
             font-size: 24px;
-            margin: 20px 0;
-            color: #333;
+            font-weight: bold;
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 8px;
         }
+
+        #countdown {
+            font-size: 30px;
+            color: #FFD700;
+        }
+
         .prayer-times {
-            background-color: #fff;
+            background: rgba(0, 50, 0, 0.7);
             margin: 10px;
             padding: 15px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            display: inline-block;
-            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 400px;
         }
+
         .prayer-times h3 {
-            color: #333;
+            color: #FFD700;
+            font-size: 22px;
+            margin-bottom: 5px;
         }
+
         .prayer-times p {
-            color: #555;
-        }
-        .countdown-style {
-            font-size: 30px;
-            font-weight: bold;
-            color: #007BFF;
-        }
-        .prayer-info {
             font-size: 18px;
-            margin-top: 10px;
+            margin: 5px 0;
         }
+
     </style>
 </head>
 <body>
@@ -47,7 +68,7 @@
     <h1>Prayer Times</h1>
 
     <div id="next-prayer">Loading...</div>
-    <div id="countdown" class="countdown-style">--:--</div>
+    <div id="countdown">--:--</div>
 
     <div id="prayer-times"></div>
 
@@ -69,78 +90,6 @@
                     asr: "03:34 PM",
                     maghrib: "05:59 PM",
                     isha: "07:21 PM",
-                },
-                {
-                    date: "02/21",
-                    fajr: "05:22 AM",
-                    dhuhr: "12:30 PM",
-                    asr: "03:34 PM",
-                    maghrib: "06:00 PM",
-                    isha: "07:22 PM",
-                },
-                {
-                    date: "02/22",
-                    fajr: "05:21 AM",
-                    dhuhr: "12:30 PM",
-                    asr: "03:35 PM",
-                    maghrib: "06:01 PM",
-                    isha: "07:23 PM",
-                },
-                {
-                    date: "02/23",
-                    fajr: "05:20 AM",
-                    dhuhr: "12:30 PM",
-                    asr: "03:36 PM",
-                    maghrib: "06:02 PM",
-                    isha: "07:24 PM",
-                },
-                {
-                    date: "02/24",
-                    fajr: "05:19 AM",
-                    dhuhr: "12:30 PM",
-                    asr: "03:36 PM",
-                    maghrib: "06:03 PM",
-                    isha: "07:25 PM",
-                },
-                {
-                    date: "02/25",
-                    fajr: "05:18 AM",
-                    dhuhr: "12:29 PM",
-                    asr: "03:37 PM",
-                    maghrib: "06:04 PM",
-                    isha: "07:27 PM",
-                },
-                {
-                    date: "02/26",
-                    fajr: "05:17 AM",
-                    dhuhr: "12:29 PM",
-                    asr: "03:38 PM",
-                    maghrib: "06:05 PM",
-                    isha: "07:28 PM",
-                },
-                {
-                    date: "02/27",
-                    fajr: "05:16 AM",
-                    dhuhr: "12:29 PM",
-                    asr: "03:38 PM",
-                    maghrib: "06:06 PM",
-                    isha: "07:29 PM",
-                },
-                {
-                    date: "02/28",
-                    fajr: "05:15 AM",
-                    dhuhr: "12:29 PM",
-                    asr: "03:39 PM",
-                    maghrib: "06:07 PM",
-                    isha: "07:30 PM",
-                },
-                {
-                    date: "02/29",
-                    fajr: "05:14 AM",
-                    dhuhr: "12:29 PM",
-                    asr: "03:39 PM",
-                    maghrib: "06:07 PM",
-                    isha: "07:30 PM",
                 }
             ];
 
@@ -149,7 +98,6 @@
             let nextPrayerTime = null;
             let nextPrayerName = "";
 
-            // Helper function to convert time to 24-hour format and compare it
             function to24HourFormat(timeStr) {
                 const [time, modifier] = timeStr.split(" ");
                 let [hours, minutes] = time.split(":").map(num => parseInt(num, 10));
@@ -160,7 +108,6 @@
                 return new Date(currentTime.toDateString() + ` ${hours}:${minutes}:00`);
             }
 
-            // Loop through the prayer times and find the next prayer
             prayerTimes.forEach(prayer => {
                 const todayPrayerTimes = [
                     { name: "Fajr", time: to24HourFormat(prayer.fajr) },
@@ -179,7 +126,6 @@
                 });
             });
 
-            // If there's no prayer time left today, set the next prayer to Fajr of the next day
             if (!nextPrayer) {
                 const nextDay = new Date(currentTime);
                 nextDay.setDate(currentTime.getDate() + 1);
@@ -188,26 +134,42 @@
                 nextPrayerTime = to24HourFormat(nextPrayer.fajr);
             }
 
-            // Calculate time left for next prayer
-            const timeLeft = new Date(nextPrayerTime - currentTime);
-            const hoursLeft = String(timeLeft.getUTCHours()).padStart(2, "0");
-            const minutesLeft = String(timeLeft.getUTCMinutes()).padStart(2, "0");
+            function updateCountdown() {
+                const now = new Date();
+                const timeLeft = new Date(nextPrayerTime - now);
+                const hoursLeft = String(timeLeft.getUTCHours()).padStart(2, "0");
+                const minutesLeft = String(timeLeft.getUTCMinutes()).padStart(2, "0");
+                const secondsLeft = String(timeLeft.getUTCSeconds()).padStart(2, "0");
 
-            document.getElementById("next-prayer").innerText = `Next Prayer: ${nextPrayerName}`;
-            document.getElementById("countdown").innerText = `${hoursLeft}:${minutesLeft}`;
+                document.getElementById("countdown").innerText = `${hoursLeft}:${minutesLeft}:${secondsLeft}`;
 
-            // Display today's prayer times
+                if (timeLeft <= 0) {
+                    location.reload();
+                }
+            }
+
+            document.getElementById("next-prayer").innerText = `Next: ${nextPrayerName}`;
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+
             const prayerTimesContainer = document.getElementById("prayer-times");
-            prayerTimesContainer.innerHTML = `
-                <div class="prayer-times">
-                    <h3>Today: ${nextPrayer.date}</h3>
-                    <p>Fajr: ${nextPrayer.fajr}</p>
-                    <p>Dhuhr: ${nextPrayer.dhuhr}</p>
-                    <p>Asr: ${nextPrayer.asr}</p>
-                    <p>Maghrib: ${nextPrayer.maghrib}</p>
-                    <p>Isha: ${nextPrayer.isha}</p>
-                </div>
-            `;
+            const today = currentTime.toLocaleDateString("en-US", { month: '2-digit', day: '2-digit' });
+
+            prayerTimes.forEach(prayer => {
+                if (prayer.date === today) {
+                    const prayerHTML = `
+                        <div class="prayer-times">
+                            <h3>${prayer.date}</h3>
+                            <p>Fajr: ${prayer.fajr}</p>
+                            <p>Dhuhr: ${prayer.dhuhr}</p>
+                            <p>Asr: ${prayer.asr}</p>
+                            <p>Maghrib: ${prayer.maghrib}</p>
+                            <p>Isha: ${prayer.isha}</p>
+                        </div>
+                    `;
+                    prayerTimesContainer.innerHTML += prayerHTML;
+                }
+            });
         });
     </script>
 </body>
