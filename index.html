@@ -6,33 +6,36 @@
     <title>Prayer Times</title>
     <style>
         body {
-            font-family: 'Noto Sans', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f0f0f0;
+            font-family: 'Noto Sans Kurdish', 'Arial', sans-serif;
+            text-align: center;
+            background-color: #f5f5f5;
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            height: 100vh;
-            overflow: hidden;
+            min-height: 100vh;
         }
 
-        .content {
-            text-align: center;
-            color: white;
+        h1 {
+            font-size: 28px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
         }
 
-        .background {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+        #image-container {
+            margin-top: 20px;
+            max-width: 100%;
+            height: 400px;
             background-size: cover;
             background-position: center;
-            z-index: -1;
-            transition: background-image 1s ease-in-out;
+            border-radius: 8px;
+        }
+
+        #next-prayer, #countdown {
+            font-size: 24px;
+            font-weight: bold;
         }
 
         .prayer-times {
@@ -151,11 +154,11 @@
     const updatePrayerSchedule = () => {
         const scheduleElement = document.getElementById("todaySchedule");
         scheduleElement.innerHTML = `
-            <li><span class="prayer-name">Fajr:</span> ${prayerTimes.fajr}</li>
-            <li><span class="prayer-name">Dhuhr:</span> ${prayerTimes.dhuhr}</li>
-            <li><span class="prayer-name">Asr:</span> ${prayerTimes.asr}</li>
-            <li><span class="prayer-name">Maghrib:</span> ${prayerTimes.maghrib}</li>
-            <li><span class="prayer-name">Isha:</span> ${prayerTimes.isha}</li>
+            <li><span class="prayer-name">سپێدە:</span> ${prayerTimes.fajr}</li>
+            <li><span class="prayer-name">نیڤرو:</span> ${prayerTimes.dhuhr}</li>
+            <li><span class="prayer-name">ئێڤاری:</span> ${prayerTimes.asr}</li>
+            <li><span class="prayer-name">مەغرەب:</span> ${prayerTimes.maghrib}</li>
+            <li><span class="prayer-name">عەیشا:</span> ${prayerTimes.isha}</li>
         `;
     };
 
