@@ -80,7 +80,6 @@
         document.addEventListener("DOMContentLoaded", function() {
             const prayerTimes = [
                 {
-                    date: "02/20",
                     fajr: "05:23",
                     dhuhr: "12:30",
                     asr: "15:34",
@@ -125,17 +124,20 @@
                     }
                 }
 
-                if (nextPrayer && nextPrayerTime) {
-                    let timeDiff = Math.floor((nextPrayerTime - now) / 1000);
-                    let hours = Math.floor(timeDiff / 3600);
-                    let minutes = Math.floor((timeDiff % 3600) / 60);
-                    let seconds = timeDiff % 60;
-                    document.getElementById("next-prayer").innerText = `بانگێ بهێت: ${prayerNames[nextPrayer]}`;
-                    document.getElementById("countdown").innerText = `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                } else {
-                    document.getElementById("next-prayer").innerText = "بانگێ بهێت: سپێدە";
-                    document.getElementById("countdown").innerText = "--:--";
+                if (!nextPrayer) {
+                    nextPrayer = "fajr";
+                    let [hours, minutes] = prayer["fajr"].split(":").map(Number);
+                    nextPrayerTime = new Date();
+                    nextPrayerTime.setDate(now.getDate() + 1);
+                    nextPrayerTime.setHours(hours, minutes, 0, 0);
                 }
+
+                let timeDiff = Math.floor((nextPrayerTime - now) / 1000);
+                let hours = Math.floor(timeDiff / 3600);
+                let minutes = Math.floor((timeDiff % 3600) / 60);
+                let seconds = timeDiff % 60;
+                document.getElementById("next-prayer").innerText = `بانگێ بهێت: ${prayerNames[nextPrayer]}`;
+                document.getElementById("countdown").innerText = `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             }
 
             updatePrayerTimes();
