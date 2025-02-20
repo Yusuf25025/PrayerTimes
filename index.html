@@ -237,14 +237,16 @@
                 const maghribSeconds = String(maghribLeft.getUTCSeconds()).padStart(2, "0");
 
                 document.getElementById("maghrib-countdown").innerText = `مەغرەب: ${maghribHours}:${maghribMinutes}:${maghribSeconds}`;
-
-                if (timeLeft <= 0) {
-                    location.reload();
-                }
             }
 
-            document.getElementById("next-prayer").innerText = `بانگێ بهێت: ${nextPrayerName}`;
-            setInterval(updateCountdown, 1000);
+            function updateNextPrayer() {
+                document.getElementById("next-prayer").innerText = `بانگێ بهێت: ${nextPrayerName}`;
+            }
+
+            setInterval(function() {
+                updateCountdown();
+                updateNextPrayer();
+            }, 1000);
         });
     </script>
 </body>
