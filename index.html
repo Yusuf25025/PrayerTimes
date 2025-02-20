@@ -180,6 +180,7 @@
             let nextPrayerName = "";
             let maghribTime = null;
             let maghribPassed = false;
+            let todaysPrayers = [];
 
             function to12HourFormat(timeStr) {
                 const [hours, minutes] = timeStr.split(":").map(num => parseInt(num, 10));
@@ -212,6 +213,13 @@
                     if (prayerTime.name === prayerNames.maghrib) {
                         maghribTime = prayerTime.time;
                     }
+
+                    if (currentTime.toLocaleDateString() === new Date(prayer.date).toLocaleDateString()) {
+                        todaysPrayers.push({
+                            name: prayerTime.name,
+                            time: to12HourFormat(prayerTime.time)
+                        });
+                    }
                 });
             });
 
@@ -243,11 +251,24 @@
                 document.getElementById("next-prayer").innerText = `بانگێ بهێت: ${nextPrayerName}`;
             }
 
-            setInterval(function() {
+            function displayPrayerTimes() {
+                const prayerTimesDiv = document.getElementById("prayer-times");
+                prayerTimesDiv.innerHTML = `<h3>دەمێن بانگێن ئەمڕۆ</h3>`;
+
+                todaysPrayers.forEach(prayer => {
+                    prayerTimesDiv.innerHTML += `<p>${prayer.name}: ${prayer.time}</p>`;
+                });
+            }
+
+            updateCountdown();
+            updateNextPrayer();
+            displayPrayerTimes();
+
+            setInterval(() => {
                 updateCountdown();
-                updateNextPrayer();
             }, 1000);
         });
     </script>
+
 </body>
 </html>
