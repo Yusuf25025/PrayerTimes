@@ -66,7 +66,15 @@
             text-align: center;
         }
 
+        /* Kurdish font styling */
+        body {
+            font-family: 'Amiri', 'Noto Sans Kurdish', 'Noto Sans Arabic', Arial, sans-serif;
+        }
+
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kurdish:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -74,6 +82,7 @@
 
     <div id="next-prayer">Loading...</div>
     <div id="countdown">--:--</div>
+    <div id="maghrib-countdown">--:--</div>
 
     <div id="prayer-times"></div>
 
@@ -170,10 +179,20 @@
                 }
             ];
 
+            const prayerNames = {
+                fajr: "سپێدە",
+                dhuhr: "نیڤرو",
+                asr: "ئێڤاری",
+                maghrib: "مەغرەب",
+                isha: "عەیشا"
+            };
+
             const currentTime = new Date();
             let nextPrayer = null;
             let nextPrayerTime = null;
             let nextPrayerName = "";
+            let maghribTime = null;
+            let maghribPassed = false;
 
             function to24HourFormat(timeStr) {
                 const [time, modifier] = timeStr.split(" ");
@@ -187,11 +206,11 @@
 
             prayerTimes.forEach(prayer => {
                 const todayPrayerTimes = [
-                    { name: "Fajr", time: to24HourFormat(prayer.fajr) },
-                    { name: "Dhuhr", time: to24HourFormat(prayer.dhuhr) },
-                    { name: "Asr", time: to24HourFormat(prayer.asr) },
-                    { name: "Maghrib", time: to24HourFormat(prayer.maghrib) },
-                    { name: "Isha", time: to24HourFormat(prayer.isha) }
+                    { name: prayerNames.fajr, time: to24HourFormat(prayer.fajr) },
+                    { name: prayerNames.dhuhr, time: to24HourFormat(prayer.dhuhr) },
+                    { name: prayerNames.asr, time: to24HourFormat(prayer.asr) },
+                    { name: prayerNames.maghrib, time: to24HourFormat(prayer.maghrib) },
+                    { name: prayerNames.isha, time: to24HourFormat(prayer.isha) }
                 ];
 
                 todayPrayerTimes.forEach(prayerTime => {
@@ -200,14 +219,19 @@
                         nextPrayer = prayer;
                         nextPrayerName = prayerTime.name;
                     }
+
+                    // Check for Maghrib
+                    if (prayerTime.name === prayerNames.maghrib) {
+                        maghribTime = prayerTime.time;
+                    }
                 });
             });
 
-            if (!nextPrayer) {
-                const nextDay = new Date(currentTime);
-                nextDay.setDate(currentTime.getDate() + 1);
-                nextPrayer = prayerTimes.find(prayer => prayer.date === `02/${nextDay.getDate() < 10 ? '0' + nextDay.getDate() : nextDay.getDate()}`);
-                nextPrayerName = "Fajr";
+            // If maghrib has passed, set up Fajr countdown
+            if (currentTime > maghribTime) {
+                maghribPassed = true;
+                nextPrayer = prayerTimes[0]; // Set the next Fajr prayer
+                nextPrayerName = prayerNames.fajr;
                 nextPrayerTime = to24HourFormat(nextPrayer.fajr);
             }
 
@@ -220,33 +244,22 @@
 
                 document.getElementById("countdown").innerText = `${hoursLeft}:${minutesLeft}:${secondsLeft}`;
 
+                // Maghrib countdown
+                const maghribLeft = new Date(maghribTime - now);
+                const maghribHours = String(maghribLeft.getUTCHours()).padStart(2, "0");
+                const maghribMinutes = String(maghribLeft.getUTCMinutes()).padStart(2, "0");
+                const maghribSeconds = String(maghribLeft.getUTCSeconds()).padStart(2, "0");
+                
+                document.getElementById("maghrib-countdown").innerText = `Maghrib: ${maghribHours}:${maghribMinutes}:${maghribSeconds}`;
+
                 if (timeLeft <= 0) {
                     location.reload();
                 }
             }
 
-            document.getElementById("next-prayer").innerText = `Next: ${nextPrayerName}`;
+            document.getElementById("next-prayer").innerText = `Next prayer: ${nextPrayerName} at ${nextPrayerTime.toLocaleTimeString()}`;
             updateCountdown();
             setInterval(updateCountdown, 1000);
-
-            const prayerTimesContainer = document.getElementById("prayer-times");
-            const today = currentTime.toLocaleDateString("en-US", { month: '2-digit', day: '2-digit' });
-
-            prayerTimes.forEach(prayer => {
-                if (prayer.date === today) {
-                    const prayerHTML = `
-                        <div class="prayer-times">
-                            <h3>${prayer.date}</h3>
-                            <p>Fajr: ${prayer.fajr}</p>
-                            <p>Dhuhr: ${prayer.dhuhr}</p>
-                            <p>Asr: ${prayer.asr}</p>
-                            <p>Maghrib: ${prayer.maghrib}</p>
-                            <p>Isha: ${prayer.isha}</p>
-                        </div>
-                    `;
-                    prayerTimesContainer.innerHTML += prayerHTML;
-                }
-            });
         });
     </script>
 </body>
