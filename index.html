@@ -106,12 +106,15 @@
         isha: "7:30"
     };
 
-    const getRemainingTime = (timeString) => {
-        const [hours, minutes] = timeString.split(":").map(Number);
+    // Function to calculate the remaining time for the next prayer
+    const getRemainingTime = (prayerTime) => {
+        const [hours, minutes] = prayerTime.split(":").map(Number);
         const targetTime = new Date();
         targetTime.setHours(hours, minutes, 0, 0);
         const currentTime = new Date();
         const timeDifference = targetTime - currentTime;
+
+        if (timeDifference <= 0) return null; // Time has already passed today
 
         const hoursLeft = Math.floor(timeDifference / (1000 * 60 * 60));
         const minutesLeft = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
@@ -119,30 +122,35 @@
         return { hoursLeft, minutesLeft };
     };
 
-    const updateNextPrayer = () => {
+    // Function to update the countdown and next prayer info
+    const updatePrayerInfo = () => {
         const currentTime = new Date();
-        const nextPrayerTime = Object.entries(prayerTimes).find(([key, value]) => {
-            const [hours, minutes] = value.split(":").map(Number);
-            const prayerTime = new Date();
-            prayerTime.setHours(hours, minutes, 0, 0);
-            return prayerTime > currentTime;
+        let nextPrayerTime = null;
+        let nextPrayerName = '';
+
+        // Find the next prayer after current time
+        Object.entries(prayerTimes).forEach(([prayerName, time]) => {
+            const { hoursLeft, minutesLeft } = getRemainingTime(time);
+            if (hoursLeft !== null && minutesLeft !== null && (!nextPrayerTime || (hoursLeft < nextPrayerTime.hoursLeft) || (hoursLeft === nextPrayerTime.hoursLeft && minutesLeft < nextPrayerTime.minutesLeft))) {
+                nextPrayerTime = { hoursLeft, minutesLeft };
+                nextPrayerName = prayerName;
+            }
         });
 
         if (nextPrayerTime) {
-            const prayerName = nextPrayerTime[0];
-            const prayerTime = nextPrayerTime[1];
-            const { hoursLeft, minutesLeft } = getRemainingTime(prayerTime);
+            document.getElementById("nextPrayer").textContent = nextPrayerName;
+            document.getElementById("timeLeft").textContent = `${nextPrayerTime.hoursLeft} hours ${nextPrayerTime.minutesLeft} minutes`;
 
-            document.getElementById("nextPrayer").textContent = prayerName;
-            document.getElementById("timeLeft").textContent = `${hoursLeft} hours ${minutesLeft} minutes`;
-
-            if (prayerName === "maghrib") {
-                const { hoursLeft, minutesLeft } = getRemainingTime(prayerTimes.maghrib);
-                document.getElementById("maghribCountdown").textContent = `${hoursLeft} hours ${minutesLeft} minutes until Maghrib`;
+            // Show countdown for Maghrib
+            if (nextPrayerName === "maghrib") {
+                document.getElementById("maghribCountdown").textContent = `Maghrib is in: ${nextPrayerTime.hoursLeft} hours and ${nextPrayerTime.minutesLeft} minutes`;
+            } else {
+                document.getElementById("maghribCountdown").textContent = '';
             }
         }
     };
 
+    // Function to update the prayer schedule
     const updatePrayerSchedule = () => {
         const scheduleElement = document.getElementById("todaySchedule");
         scheduleElement.innerHTML = `
@@ -154,12 +162,14 @@
         `;
     };
 
+    // Update the timers and prayer info every minute
     setInterval(() => {
-        updateNextPrayer();
+        updatePrayerInfo();
         updatePrayerSchedule();
-    }, 1000);
+    }, 60000);
 
-    updateNextPrayer();
+    // Initial update
+    updatePrayerInfo();
     updatePrayerSchedule();
 </script>
 
