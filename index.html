@@ -12,11 +12,13 @@
             background: url('https://source.unsplash.com/1600x900/?mosque') no-repeat center center/cover;
             background-size: cover;
             color: #f5f5f5;
-            padding: 20px;
+            padding: 0;
+            margin: 0;
+            height: 100vh;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
-            min-height: 100vh;
+            flex-direction: column;
         }
 
         h1 {
@@ -25,6 +27,7 @@
             padding: 10px 20px;
             border-radius: 8px;
             font-weight: bold;
+            margin-bottom: 20px;
         }
 
         #next-prayer, #countdown {
@@ -48,7 +51,7 @@
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
             width: 90%;
-            max-width: 400px;
+            max-width: 500px;
         }
 
         .prayer-times h3 {
