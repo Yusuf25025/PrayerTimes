@@ -61,6 +61,52 @@
             margin: 5px 0;
         }
 
+        /* For React part */
+        .flex {
+            display: flex;
+        }
+        .flex-col {
+            flex-direction: column;
+        }
+        .items-center {
+            align-items: center;
+        }
+        .justify-center {
+            justify-content: center;
+        }
+        .min-h-screen {
+            min-height: 100vh;
+        }
+        .bg-gray-900 {
+            background-color: #1a1a1a;
+        }
+        .text-white {
+            color: white;
+        }
+        .p-6 {
+            padding: 1.5rem;
+        }
+        .relative {
+            position: relative;
+        }
+        .bg-opacity-75 {
+            background-color: rgba(0, 0, 0, 0.75);
+        }
+        .rounded-2xl {
+            border-radius: 1.5rem;
+        }
+        .shadow-lg {
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+        .text-xl {
+            font-size: 1.25rem;
+        }
+        .font-bold {
+            font-weight: bold;
+        }
+        .font-semibold {
+            font-weight: semi-bold;
+        }
     </style>
 </head>
 <body>
@@ -71,6 +117,44 @@
     <div id="countdown">--:--</div>
 
     <div id="prayer-times"></div>
+
+    <div class="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white p-6 relative">
+        <div class="absolute inset-0 bg-cover bg-center opacity-10"
+             style="background-image: url('https://source.unsplash.com/1600x900/?mosque')">
+        </div>
+
+        <h1 class="text-4xl font-bold mb-4 relative z-10">Prayer Times</h1>
+        <p class="mb-6 relative z-10">02/20</p>
+
+        <div class="bg-gray-800 bg-opacity-75 p-6 rounded-2xl shadow-lg relative z-10">
+            <div class="grid grid-cols-2 gap-4 text-lg text-center">
+                <div class="flex flex-col items-center">
+                    <span class="font-semibold text-lg">Fajr</span>
+                    <span class="text-xl font-bold">05:23 AM</span>
+                </div>
+                <div class="flex flex-col items-center">
+                    <span class="font-semibold text-lg">Dhuhr</span>
+                    <span class="text-xl font-bold">12:30 PM</span>
+                </div>
+                <div class="flex flex-col items-center">
+                    <span class="font-semibold text-lg">Asr</span>
+                    <span class="text-xl font-bold">03:34 PM</span>
+                </div>
+                <div class="flex flex-col items-center">
+                    <span class="font-semibold text-lg">Maghrib</span>
+                    <span class="text-xl font-bold">05:59 PM</span>
+                </div>
+                <div class="flex flex-col items-center">
+                    <span class="font-semibold text-lg">Isha</span>
+                    <span class="text-xl font-bold">07:21 PM</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="absolute bottom-6 flex justify-center w-full">
+            <img src="/mosque-icon.png" alt="Mosque" class="w-16 h-16 opacity-80" />
+        </div>
+    </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -172,60 +256,5 @@
             });
         });
     </script>
-import React from "react";
-import { useEffect, useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-
-const PrayerTimes = () => {
-  const [times, setTimes] = useState(null);
-  const [date, setDate] = useState("");
-
-  useEffect(() => {
-    fetch(
-      "https://api.aladhan.com/v1/timingsByCity?city=Mecca&country=Saudi%20Arabia&method=2"
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        setTimes(data.data.timings);
-        setDate(data.data.date.readable);
-      });
-  }, []);
-
-  if (!times) {
-    return <p>Loading prayer times...</p>;
-  }
-
-  return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white p-6 relative">
-      {/* Background Image */}
-      <div
-        className="absolute inset-0 bg-cover bg-center opacity-10"
-        style={{ backgroundImage: "url('/mosque-bg.jpg')" }}
-      ></div>
-      
-      <h1 className="text-4xl font-bold mb-4 relative z-10">Prayer Times</h1>
-      <p className="mb-6 relative z-10">{date}</p>
-      
-      <Card className="bg-gray-800 bg-opacity-75 p-6 rounded-2xl shadow-lg relative z-10">
-        <CardContent className="grid grid-cols-2 gap-4 text-lg text-center">
-          {Object.entries(times).map(([name, time]) => (
-            <div key={name} className="flex flex-col items-center">
-              <span className="font-semibold text-lg">{name}</span>
-              <span className="text-xl font-bold">{time}</span>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
-      
-      {/* Centered Mosque Icon */}
-      <div className="absolute bottom-6 flex justify-center w-full">
-        <img src="/mosque-icon.png" alt="Mosque" className="w-16 h-16 opacity-80" />
-      </div>
-    </div>
-  );
-};
-
-export default PrayerTimes;
-
 </body>
 </html>
