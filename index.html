@@ -50,12 +50,6 @@
             max-width: 400px;
         }
 
-        .prayer-times h3 {
-            color: #FFD700;
-            font-size: 22px;
-            margin-bottom: 5px;
-        }
-
         .prayer-times p {
             font-size: 18px;
             margin: 5px 0;
@@ -240,10 +234,6 @@
                 document.getElementById("countdown").textContent = `${hoursLeft}:${minutesLeft}:${secondsLeft}`;
             }
 
-            function updateNextPrayer() {
-                document.getElementById("next-prayer").textContent = `بانگێ بهێت: ${nextPrayerName}`;
-            }
-
             function updateMaghribCountdown() {
                 const maghribTimeLeft = new Date(maghribTime - new Date());
                 const maghribHours = String(maghribTimeLeft.getUTCHours()).padStart(2, "0");
@@ -260,12 +250,12 @@
                 document.getElementById("prayer-times").innerHTML = timesHtml;
             }
 
-            updateNextPrayer();
-            updatePrayerTimes();
             updateMaghribCountdown();
+            updatePrayerTimes();
+            updateCountdown();
             setInterval(updateCountdown, 1000);
+            setInterval(updateMaghribCountdown, 1000);
         });
     </script>
-
 </body>
 </html>
