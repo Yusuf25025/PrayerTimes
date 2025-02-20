@@ -9,7 +9,7 @@
         body {
             font-family: 'Noto Sans Kurdish', 'Arial', sans-serif;
             text-align: center;
-            background: url('https://images.unsplash.com/photo-1512632578888-169bbbc64f33?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat center center/cover;
+            background: url('https://images.unsplash.com/photo-1512632578888-169bbbc64f33?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fHx8fA%3D%3D') no-repeat center center/cover;
             color: #f5f5f5;
             padding: 20px;
             display: flex;
@@ -42,17 +42,17 @@
 
         .prayer-times-container {
             background: rgba(0, 128, 0, 0.7);
-            padding: 15px;
+            padding: 10px;
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            width: 90%;
-            max-width: 400px;
+            width: 80%;
+            max-width: 350px;
             margin-top: 10px;
         }
 
         .prayer-times {
             background: rgba(0, 50, 0, 0.7);
-            padding: 15px;
+            padding: 10px;
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
             width: 100%;
@@ -99,7 +99,7 @@
             };
 
             function updatePrayerTimes() {
-                let timesHtml = "<div><h3>ئێمە دەمانەوە تایمەکانی پەیمانەکان:</h3>";
+                let timesHtml = "";
                 prayerTimes.forEach(prayer => {
                     timesHtml += `<p>${prayerNames.fajr}: ${prayer.fajr}</p>`;
                     timesHtml += `<p>${prayerNames.dhuhr}: ${prayer.dhuhr}</p>`;
@@ -107,7 +107,6 @@
                     timesHtml += `<p>${prayerNames.maghrib}: ${prayer.maghrib}</p>`;
                     timesHtml += `<p>${prayerNames.isha}: ${prayer.isha}</p>`;
                 });
-                timesHtml += "</div>";
                 document.getElementById("prayer-times").innerHTML = timesHtml;
             }
 
