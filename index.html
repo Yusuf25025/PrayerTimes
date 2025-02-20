@@ -5,180 +5,116 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prayer Times</title>
     <style>
-        /* General styling */
         body {
-            font-family: 'Noto Sans Kurdish', 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
             text-align: center;
-            background: url('https://images.unsplash.com/photo-1512632578888-169bbbc64f33?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat center center/cover;
-            color: #f5f5f5;
+        }
+        .container {
+            background-color: #fff;
             padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
         }
-
         h1 {
-            font-size: 28px;
-            background: rgba(0, 0, 0, 0.6);
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: bold;
+            font-size: 36px;
+            color: #333;
         }
-
-        #next-prayer, #countdown, #maghrib-countdown {
-            font-size: 24px;
-            font-weight: bold;
-            margin: 10px 0;
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.6);
-            border-radius: 8px;
-        }
-
-        #countdown {
+        .time {
             font-size: 30px;
-            color: #FFD700;
+            font-weight: bold;
         }
-
-        .prayer-times {
-            background: rgba(0, 50, 0, 0.7);
-            margin: 10px;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            width: 90%;
-            max-width: 400px;
+        .countdown {
+            font-size: 40px;
+            font-weight: bold;
+            color: #f44336;
         }
-
-        .prayer-times p {
+        .schedule {
+            margin-top: 20px;
             font-size: 18px;
+            color: #555;
+        }
+        .schedule ul {
+            padding: 0;
+            list-style-type: none;
+        }
+        .schedule li {
+            font-size: 20px;
             margin: 5px 0;
         }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kurdish:wght@700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <h1>دەمێن بانگا</h1>
+<div class="container">
+    <h1>بانگا</h1>
 
-    <div id="next-prayer">بانگێ بهێت: سپێدە</div>
-    <div id="countdown">--:--</div>
-    <div id="maghrib-countdown">مەغرەب: --:--</div>
+    <div id="countdown" class="countdown"></div>
 
-    <div id="prayer-times"></div>
+    <div class="schedule" id="schedule">
+        <ul id="prayerTimes"></ul>
+    </div>
+</div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const prayerTimes = [
-                {
-                    date: "02/20",
-                    fajr: "05:23",
-                    dhuhr: "12:30",
-                    asr: "03:34",
-                    maghrib: "05:59",
-                    isha: "07:21",
-                }
-            ];
+<script>
+    const prayerTimes = [
+        { date: "02/20", fajr: "05:23", dhuhr: "12:30", asr: "03:34", maghrib: "05:59", isha: "07:21" },
+        { date: "02/21", fajr: "05:24", dhuhr: "12:31", asr: "03:35", maghrib: "06:00", isha: "07:22" },
+        { date: "02/22", fajr: "05:25", dhuhr: "12:32", asr: "03:36", maghrib: "06:01", isha: "07:23" },
+        { date: "02/23", fajr: "05:26", dhuhr: "12:33", asr: "03:37", maghrib: "06:02", isha: "07:24" },
+        // Add other dates as needed...
+    ];
 
-            const prayerNames = {
-                fajr: "سپێدە",
-                dhuhr: "نیڤرو",
-                asr: "ئێڤاری",
-                maghrib: "مەغرەب",
-                isha: "عەیشا"
-            };
+    const today = new Date();
+    const currentDate = today.getDate();
+    const currentMonth = today.getMonth() + 1; // Month is 0-indexed
+    const formattedDate = `${currentMonth.toString().padStart(2, '0')}/${currentDate.toString().padStart(2, '0')}`;
 
-            const currentTime = new Date();
-            let nextPrayer = null;
-            let nextPrayerTime = null;
-            let nextPrayerName = "";
-            let maghribTime = null;
-            let maghribPassed = false;
-            let todaysPrayers = [];
+    // Find the prayer times for today
+    const todaysTimes = prayerTimes.find(time => time.date === formattedDate);
 
-            function to12HourFormat(timeStr) {
-                const [hours, minutes] = timeStr.split(":").map(num => parseInt(num, 10));
-                let displayHour = hours % 12;
-                if (displayHour === 0) displayHour = 12;
-                return `${displayHour}:${String(minutes).padStart(2, "0")}`;
-            }
+    if (todaysTimes) {
+        const timesList = document.getElementById('prayerTimes');
+        timesList.innerHTML = `
+            <li>سپێدە: ${todaysTimes.fajr}</li>
+            <li>نیڤرو: ${todaysTimes.dhuhr}</li>
+            <li>ئێڤاری: ${todaysTimes.asr}</li>
+            <li>مەغرەب: ${todaysTimes.maghrib}</li>
+            <li>عەیشا: ${todaysTimes.isha}</li>
+        `;
+    }
 
-            function to24HourFormat(timeStr) {
-                const [hours, minutes] = timeStr.split(":").map(num => parseInt(num, 10));
-                return new Date(currentTime.toDateString() + ` ${hours}:${minutes}:00`);
-            }
+    // Countdown to Maghrib
+    function updateCountdown() {
+        const maghribTime = todaysTimes ? todaysTimes.maghrib : "00:00";
+        const [maghribHour, maghribMinute] = maghribTime.split(':').map(num => parseInt(num));
 
-            prayerTimes.forEach(prayer => {
-                const todayPrayerTimes = [
-                    { name: prayerNames.fajr, time: to24HourFormat(prayer.fajr) },
-                    { name: prayerNames.dhuhr, time: to24HourFormat(prayer.dhuhr) },
-                    { name: prayerNames.asr, time: to24HourFormat(prayer.asr) },
-                    { name: prayerNames.maghrib, time: to24HourFormat(prayer.maghrib) },
-                    { name: prayerNames.isha, time: to24HourFormat(prayer.isha) }
-                ];
+        const now = new Date();
+        const maghribDate = new Date(now);
+        maghribDate.setHours(maghribHour);
+        maghribDate.setMinutes(maghribMinute);
+        maghribDate.setSeconds(0);
 
-                todayPrayerTimes.forEach(prayerTime => {
-                    if (currentTime < prayerTime.time && (!nextPrayerTime || prayerTime.time < nextPrayerTime)) {
-                        nextPrayerTime = prayerTime.time;
-                        nextPrayer = prayer;
-                        nextPrayerName = prayerTime.name;
-                    }
+        const remainingTime = maghribDate - now;
+        if (remainingTime <= 0) {
+            document.getElementById('countdown').innerHTML = "مەغرەب: نوکە دەمێ بانگێ مەغرەبە";
+            return;
+        }
 
-                    if (prayerTime.name === prayerNames.maghrib) {
-                        maghribTime = prayerTime.time;
-                    }
+        const hours = Math.floor(remainingTime / (1000 * 60 * 60));
+        const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
 
-                    if (currentTime.toLocaleDateString() === new Date(prayer.date).toLocaleDateString()) {
-                        todaysPrayers.push({
-                            name: prayerTime.name,
-                            time: to12HourFormat(prayerTime.time)
-                        });
-                    }
-                });
-            });
+        document.getElementById('countdown').innerHTML = `مەغرەب: ${hours}h ${minutes}m ${seconds}s`;
 
-            if (currentTime > maghribTime) {
-                maghribPassed = true;
-                nextPrayer = prayerTimes[0]; // Set the next Fajr prayer
-                nextPrayerName = prayerNames.fajr;
-                nextPrayerTime = to24HourFormat(nextPrayer.fajr);
-            }
+        setTimeout(updateCountdown, 1000);
+    }
 
-            function updateCountdown() {
-                const now = new Date();
-                const timeLeft = new Date(nextPrayerTime - now);
-                const hoursLeft = String(timeLeft.getUTCHours()).padStart(2, "0");
-                const minutesLeft = String(timeLeft.getUTCMinutes()).padStart(2, "0");
-                const secondsLeft = String(timeLeft.getUTCSeconds()).padStart(2, "0");
+    updateCountdown();
+</script>
 
-                document.getElementById("countdown").textContent = `بانگێ بهێت: ${hoursLeft}:${minutesLeft}:${secondsLeft}`;
-            }
-
-            function updateMaghribCountdown() {
-                const now = new Date();
-                const timeLeft = new Date(maghribTime - now);
-                const hoursLeft = String(timeLeft.getUTCHours()).padStart(2, "0");
-                const minutesLeft = String(timeLeft.getUTCMinutes()).padStart(2, "0");
-                const secondsLeft = String(timeLeft.getUTCSeconds()).padStart(2, "0");
-
-                document.getElementById("maghrib-countdown").textContent = `مەغرەب: ${hoursLeft}:${minutesLeft}:${secondsLeft}`;
-            }
-
-            function updatePrayerTimes() {
-                let timesHtml = "<div class='prayer-times'><h3>ئێمە دەمانەوە تایمەکانی پەیمانەکان:</h3>";
-                todaysPrayers.forEach(prayer => {
-                    timesHtml += `<p>${prayer.name}: ${prayer.time}</p>`;
-                });
-                timesHtml += "</div>";
-                document.getElementById("prayer-times").innerHTML = timesHtml;
-            }
-
-            updateMaghribCountdown();
-            updatePrayerTimes();
-            updateCountdown();
-            setInterval(updateCountdown, 1000);
-            setInterval(updateMaghribCountdown, 1000);
-        });
-    </script>
 </body>
 </html>
