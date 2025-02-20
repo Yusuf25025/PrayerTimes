@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prayer Times</title>
+    <title>دەمێن بانگا</title>
     <style>
         /* General styling */
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Noto Sans', Arial, sans-serif;
             text-align: center;
             background: url('https://images.unsplash.com/photo-1512632578888-169bbbc64f33?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat center center/cover;
+            background-attachment: fixed;
             color: #f5f5f5;
             padding: 20px;
             display: flex;
@@ -26,7 +27,7 @@
             font-weight: bold;
         }
 
-        #next-prayer, #countdown {
+        #next-prayer, #countdown, #maghrib-countdown {
             font-size: 24px;
             font-weight: bold;
             margin: 10px 0;
@@ -65,22 +66,14 @@
         #prayer-times {
             text-align: center;
         }
-
-        /* Kurdish font styling */
-        body {
-            font-family: 'Amiri', 'Noto Sans Kurdish', 'Noto Sans Arabic', Arial, sans-serif;
-        }
-
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kurdish:wght@700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <h1>Prayer Times</h1>
+    <h1>دەمێن بانگا</h1>
 
-    <div id="next-prayer">Loading...</div>
+    <div id="next-prayer">لێدوانە ئەمڕۆ: تێڕوانین</div>
     <div id="countdown">--:--</div>
     <div id="maghrib-countdown">--:--</div>
 
@@ -249,18 +242,54 @@
                 const maghribHours = String(maghribLeft.getUTCHours()).padStart(2, "0");
                 const maghribMinutes = String(maghribLeft.getUTCMinutes()).padStart(2, "0");
                 const maghribSeconds = String(maghribLeft.getUTCSeconds()).padStart(2, "0");
-                
-                document.getElementById("maghrib-countdown").innerText = `Maghrib: ${maghribHours}:${maghribMinutes}:${maghribSeconds}`;
 
-                if (timeLeft <= 0) {
-                    location.reload();
+                document.getElementById("maghrib-countdown").innerText = `${maghribHours}:${maghribMinutes}:${maghribSeconds}`;
+
+                if (now > maghribTime) {
+                    document.getElementById("maghrib-countdown").style.display = "none";
                 }
             }
 
-            document.getElementById("next-prayer").innerText = `Next prayer: ${nextPrayerName} at ${nextPrayerTime.toLocaleTimeString()}`;
-            updateCountdown();
+            function updatePrayerTimesDisplay() {
+                const prayerTimesElement = document.getElementById("prayer-times");
+                prayerTimesElement.innerHTML = '';
+
+                prayerTimes.forEach(prayer => {
+                    const prayerElement = document.createElement("div");
+                    prayerElement.classList.add("prayer-times");
+
+                    const prayerDate = document.createElement("h3");
+                    prayerDate.innerText = prayer.date;
+                    prayerElement.appendChild(prayerDate);
+
+                    const fajr = document.createElement("p");
+                    fajr.innerText = `سپێدە: ${prayer.fajr}`;
+                    prayerElement.appendChild(fajr);
+
+                    const dhuhr = document.createElement("p");
+                    dhuhr.innerText = `نیڤرو: ${prayer.dhuhr}`;
+                    prayerElement.appendChild(dhuhr);
+
+                    const asr = document.createElement("p");
+                    asr.innerText = `ئێڤاری: ${prayer.asr}`;
+                    prayerElement.appendChild(asr);
+
+                    const maghrib = document.createElement("p");
+                    maghrib.innerText = `مەغرەب: ${prayer.maghrib}`;
+                    prayerElement.appendChild(maghrib);
+
+                    const isha = document.createElement("p");
+                    isha.innerText = `عەیشا: ${prayer.isha}`;
+                    prayerElement.appendChild(isha);
+
+                    prayerTimesElement.appendChild(prayerElement);
+                });
+            }
+
             setInterval(updateCountdown, 1000);
+            updatePrayerTimesDisplay();
         });
     </script>
+
 </body>
 </html>
