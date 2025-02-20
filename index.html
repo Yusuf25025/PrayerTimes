@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prayer Times</title>
     <style>
+        /* General styling */
         body {
             font-family: 'Noto Sans Kurdish', 'Arial', sans-serif;
             text-align: center;
-            background: url('https://images.unsplash.com/photo-1512632578888-169bbbc64f33?q=80&w=1770&auto=format&fit=crop') no-repeat center center/cover;
+            background: url('https://images.unsplash.com/photo-1512632578888-169bbbc64f33?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat center center/cover;
             color: #f5f5f5;
             padding: 20px;
             display: flex;
@@ -39,78 +40,78 @@
             color: #FFD700;
         }
 
-        .prayer-times {
-            background: rgba(0, 50, 0, 0.7);
-            margin: 10px;
+        .prayer-times-container {
+            background: rgba(0, 128, 0, 0.7);
             padding: 15px;
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
             width: 90%;
             max-width: 400px;
+            margin-top: 10px;
+        }
+
+        .prayer-times {
+            background: rgba(0, 50, 0, 0.7);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            width: 100%;
+        }
+
+        .prayer-times p {
+            font-size: 18px;
+            margin: 5px 0;
         }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kurdish:wght@700&display=swap" rel="stylesheet">
 </head>
 <body>
+
     <h1>دەمێن بانگا</h1>
-    <div id="next-prayer">بانگێ بهێت: --</div>
+
+    <div id="next-prayer">بانگێ بهێت: سپێدە</div>
     <div id="countdown">--:--</div>
     <div id="maghrib-countdown">مەغرەب: --:--</div>
-    <div id="prayer-times"></div>
+
+    <div class="prayer-times-container">
+        <div id="prayer-times" class="prayer-times"></div>
+    </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const prayerTimes = [
-                { fajr: "05:23", dhuhr: "12:30", asr: "15:34", maghrib: "17:59", isha: "19:21" }
+                {
+                    date: "02/20",
+                    fajr: "05:23",
+                    dhuhr: "12:30",
+                    asr: "03:34",
+                    maghrib: "05:59",
+                    isha: "07:21",
+                }
             ];
 
-            const prayerNames = ["سپێدە", "نیڤرو", "ئێڤاری", "مەغرەب", "عەیشا"];
-            
-            function to24HourDate(timeStr, addDay = 0) {
-                const [hours, minutes] = timeStr.split(":").map(Number);
-                let date = new Date();
-                date.setDate(date.getDate() + addDay);
-                date.setHours(hours, minutes, 0, 0);
-                return date;
+            const prayerNames = {
+                fajr: "سپێدە",
+                dhuhr: "نیڤرو",
+                asr: "ئێڤاری",
+                maghrib: "مەغرەب",
+                isha: "عەیشا"
+            };
+
+            function updatePrayerTimes() {
+                let timesHtml = "<div><h3>ئێمە دەمانەوە تایمەکانی پەیمانەکان:</h3>";
+                prayerTimes.forEach(prayer => {
+                    timesHtml += `<p>${prayerNames.fajr}: ${prayer.fajr}</p>`;
+                    timesHtml += `<p>${prayerNames.dhuhr}: ${prayer.dhuhr}</p>`;
+                    timesHtml += `<p>${prayerNames.asr}: ${prayer.asr}</p>`;
+                    timesHtml += `<p>${prayerNames.maghrib}: ${prayer.maghrib}</p>`;
+                    timesHtml += `<p>${prayerNames.isha}: ${prayer.isha}</p>`;
+                });
+                timesHtml += "</div>";
+                document.getElementById("prayer-times").innerHTML = timesHtml;
             }
-            
-            const now = new Date();
-            let nextPrayerIndex = -1;
-            let nextPrayerTime = null;
-            let maghribTime = to24HourDate(prayerTimes[0].maghrib);
-            if (now > maghribTime) maghribTime = to24HourDate(prayerTimes[0].maghrib, 1);
-            
-            const times = Object.values(prayerTimes[0]).map((time, i) => ({ name: prayerNames[i], time: to24HourDate(time) }));
-            
-            for (let i = 0; i < times.length; i++) {
-                if (now < times[i].time) {
-                    nextPrayerIndex = i;
-                    nextPrayerTime = times[i].time;
-                    break;
-                }
-            }
-            
-            if (nextPrayerIndex === -1) {
-                nextPrayerIndex = 0;
-                nextPrayerTime = to24HourDate(prayerTimes[0].fajr, 1);
-            }
-            
-            document.getElementById("next-prayer").textContent = `بانگێ بهێت: ${prayerNames[nextPrayerIndex]}`;
-            
-            function updateCountdown(targetTime, elementId) {
-                const now = new Date();
-                const diff = targetTime - now;
-                const hours = String(Math.floor(diff / 3600000)).padStart(2, "0");
-                const minutes = String(Math.floor((diff % 3600000) / 60000)).padStart(2, "0");
-                const seconds = String(Math.floor((diff % 60000) / 1000)).padStart(2, "0");
-                document.getElementById(elementId).textContent = `${hours}:${minutes}:${seconds}`;
-            }
-            
-            updateCountdown(nextPrayerTime, "countdown");
-            updateCountdown(maghribTime, "maghrib-countdown");
-            setInterval(() => updateCountdown(nextPrayerTime, "countdown"), 1000);
-            setInterval(() => updateCountdown(maghribTime, "maghrib-countdown"), 1000);
-            
-            document.getElementById("prayer-times").innerHTML = times.map(p => `<p>${p.name}: ${p.time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>`).join("\n");
+
+            updatePrayerTimes();
         });
     </script>
 </body>
