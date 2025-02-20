@@ -4,165 +4,172 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prayer Times</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Noto Sans', sans-serif;
             margin: 0;
             padding: 0;
-            height: 100vh;
+            background-color: #f0f0f0;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
         }
 
         .content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
+            text-align: center;
             color: white;
-            padding: 20px;
-            position: relative;
         }
 
-        .title {
-            font-size: 2rem;
-            margin-bottom: 10px;
-        }
-
-        .next-prayer {
-            font-size: 1.5rem;
-            margin: 10px 0;
-        }
-
-        .countdown {
-            font-size: 1.2rem;
-            margin-bottom: 10px;
-        }
-
-        .prayer-schedule {
-            font-size: 1rem;
-            margin-top: 20px;
-        }
-
-        .prayer-schedule .schedule-time {
-            margin: 5px 0;
-        }
-
-        .green-box {
-            background-color: rgba(0, 128, 0, 0.5);
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 20px;
-        }
-
-        #background {
+        .background {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             background-size: cover;
+            background-position: center;
             z-index: -1;
+            transition: background-image 1s ease-in-out;
+        }
+
+        .prayer-times {
+            margin: 10px;
+            font-size: 20px;
+        }
+
+        .time-left {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .prayer-schedule {
+            background-color: rgba(0, 128, 0, 0.5);
+            padding: 10px;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+
+        .schedule-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .schedule-list li {
+            font-size: 18px;
+        }
+
+        .prayer-name {
+            font-weight: bold;
+        }
+
+        .countdown {
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
-    <div id="background" class="background"></div>
-    <div class="content">
-        <div id="prayer-times-title" class="title">دەمێن بانگێن ئەڤرو</div>
-        <div id="next-prayer" class="next-prayer">Next Prayer: <span id="next-prayer-name"></span></div>
-        <div id="countdown" class="countdown">Time left: <span id="countdown-time"></span></div>
-        <div id="secondary-countdown" class="countdown">Secondary Countdown: <span id="secondary-countdown-time"></span></div>
-        <div id="prayer-schedule" class="prayer-schedule">
-            <div>دەمێن بانگێن ئەڤرو:</div>
-            <div id="schedule-list"></div>
-        </div>
-        <div class="green-box">
-            <div>Today's Prayer Times:</div>
-            <div id="today-prayer-times"></div>
-        </div>
+
+<div class="content">
+    <h1>دەمێن بانگێن ئەڤرو</h1>
+    <p class="prayer-times">بانگێ بهێت: <span id="nextPrayer"></span></p>
+    <p class="time-left" id="timeLeft"></p>
+    <div class="countdown">
+        <p id="maghribCountdown"></p>
     </div>
 
-    <script>
-        // Prayer Times Data (for today)
-        const prayerTimes = {
-            fajr: '05:00',
-            dhuhr: '12:30',
-            asr: '15:45',
-            maghrib: '18:00',
-            isha: '19:30'
-        };
+    <div class="prayer-schedule">
+        <h2>دەمێن بانگێن ئەڤرو</h2>
+        <ul class="schedule-list" id="todaySchedule">
+            <!-- Today's Prayer Times will appear here -->
+        </ul>
+    </div>
+</div>
 
-        const getPrayerTimes = () => {
-            const now = new Date();
-            const hours = now.getHours();
-            const minutes = now.getMinutes();
-            const currentTime = `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
+<div class="background" id="background"></div>
 
-            const prayers = Object.keys(prayerTimes);
-            let nextPrayer = '';
-            let nextPrayerTime = '';
-            let secondaryCountdown = '';
+<script>
+    // Prayer times for the day (replace with actual dynamic times if needed)
+    const prayerTimes = {
+        fajr: "5:00",
+        dhuhr: "12:30",
+        asr: "3:45",
+        maghrib: "6:10",
+        isha: "7:30"
+    };
 
-            for (let i = 0; i < prayers.length; i++) {
-                const prayerTime = prayerTimes[prayers[i]];
-                if (currentTime < prayerTime) {
-                    nextPrayer = prayers[i];
-                    nextPrayerTime = prayerTime;
-                    break;
-                }
+    const getRemainingTime = (timeString) => {
+        const [hours, minutes] = timeString.split(":").map(Number);
+        const targetTime = new Date();
+        targetTime.setHours(hours, minutes, 0, 0);
+        const currentTime = new Date();
+        const timeDifference = targetTime - currentTime;
+
+        const hoursLeft = Math.floor(timeDifference / (1000 * 60 * 60));
+        const minutesLeft = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+
+        return { hoursLeft, minutesLeft };
+    };
+
+    const updateNextPrayer = () => {
+        const currentTime = new Date();
+        const nextPrayerTime = Object.entries(prayerTimes).find(([key, value]) => {
+            const [hours, minutes] = value.split(":").map(Number);
+            const prayerTime = new Date();
+            prayerTime.setHours(hours, minutes, 0, 0);
+            return prayerTime > currentTime;
+        });
+
+        if (nextPrayerTime) {
+            const prayerName = nextPrayerTime[0];
+            const prayerTime = nextPrayerTime[1];
+            const { hoursLeft, minutesLeft } = getRemainingTime(prayerTime);
+
+            document.getElementById("nextPrayer").textContent = prayerName;
+            document.getElementById("timeLeft").textContent = `${hoursLeft} hours ${minutesLeft} minutes`;
+
+            if (prayerName === "maghrib") {
+                const { hoursLeft, minutesLeft } = getRemainingTime(prayerTimes.maghrib);
+                document.getElementById("maghribCountdown").textContent = `${hoursLeft} hours ${minutesLeft} minutes until Maghrib`;
             }
+        }
+    };
 
-            if (nextPrayer) {
-                const nextPrayerDate = new Date();
-                const [nextPrayerHours, nextPrayerMinutes] = nextPrayerTime.split(':');
-                nextPrayerDate.setHours(nextPrayerHours, nextPrayerMinutes);
+    const updateBackground = () => {
+        const currentTime = new Date();
+        const hour = currentTime.getHours();
 
-                const countdown = Math.max(nextPrayerDate - now, 0);
-                document.getElementById('countdown-time').textContent = formatTime(countdown);
+        if (hour % 2 === 0) {
+            document.getElementById("background").style.backgroundImage = "url('https://c4.wallpaperflare.com/wallpaper/839/873/66/photography-nature-landscape-mosque-wallpaper-preview.jpg')";
+        } else {
+            document.getElementById("background").style.backgroundImage = "url('your-other-image-url.jpg')";
+        }
+    };
 
-                if (nextPrayer === 'maghrib') {
-                    const secondaryPrayerTime = prayerTimes.isha; // Fajr countdown for the next day after Maghrib
-                    const secondaryPrayerDate = new Date();
-                    const [secondaryHours, secondaryMinutes] = secondaryPrayerTime.split(':');
-                    secondaryPrayerDate.setHours(secondaryHours, secondaryMinutes);
-                    const secondaryCountdownTime = Math.max(secondaryPrayerDate - now, 0);
-                    document.getElementById('secondary-countdown-time').textContent = formatTime(secondaryCountdownTime);
-                }
-            }
+    const updatePrayerSchedule = () => {
+        const scheduleElement = document.getElementById("todaySchedule");
+        scheduleElement.innerHTML = `
+            <li><span class="prayer-name">Fajr:</span> ${prayerTimes.fajr}</li>
+            <li><span class="prayer-name">Dhuhr:</span> ${prayerTimes.dhuhr}</li>
+            <li><span class="prayer-name">Asr:</span> ${prayerTimes.asr}</li>
+            <li><span class="prayer-name">Maghrib:</span> ${prayerTimes.maghrib}</li>
+            <li><span class="prayer-name">Isha:</span> ${prayerTimes.isha}</li>
+        `;
+    };
 
-            displayScheduleForToday();
-            updateBackground();
-        };
+    setInterval(() => {
+        updateNextPrayer();
+        updateBackground();
+        updatePrayerSchedule();
+    }, 1000);
 
-        const displayScheduleForToday = () => {
-            const scheduleList = document.getElementById('schedule-list');
-            const todayPrayerTimes = Object.keys(prayerTimes).map(prayer => {
-                return `<div class="schedule-time">${prayerTimes[prayer]}</div>`;
-            }).join('');
-            scheduleList.innerHTML = todayPrayerTimes;
-            document.getElementById('today-prayer-times').innerHTML = todayPrayerTimes;
-        };
+    updateNextPrayer();
+    updateBackground();
+    updatePrayerSchedule();
 
-        const formatTime = (timeInMs) => {
-            const minutes = Math.floor(timeInMs / 60000);
-            const seconds = Math.floor((timeInMs % 60000) / 1000);
-            return `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
-        };
+</script>
 
-        const updateBackground = () => {
-            const hour = new Date().getHours();
-            const backgroundImage = hour % 2 === 0
-                ? 'url("https://c4.wallpaperflare.com/wallpaper/839/873/66/photography-nature-landscape-mosque-wallpaper-preview.jpg")'
-                : 'url("https://your-old-mosque-image-link.jpg")';  // Replace with your actual old mosque image link
-            document.getElementById('background').style.backgroundImage = backgroundImage;
-        };
-
-        setInterval(getPrayerTimes, 1000); // Updates every second
-        getPrayerTimes(); // Initial call to load the prayer times on load
-    </script>
 </body>
 </html>
