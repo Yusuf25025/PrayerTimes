@@ -100,34 +100,42 @@
 
             function updatePrayerTimes() {
                 let timesHtml = "";
-                prayerTimes.forEach(prayer => {
-                    timesHtml += `<p>${prayerNames.fajr}: ${prayer.fajr}</p>`;
-                    timesHtml += `<p>${prayerNames.dhuhr}: ${prayer.dhuhr}</p>`;
-                    timesHtml += `<p>${prayerNames.asr}: ${prayer.asr}</p>`;
-                    timesHtml += `<p>${prayerNames.maghrib}: ${prayer.maghrib}</p>`;
-                    timesHtml += `<p>${prayerNames.isha}: ${prayer.isha}</p>`;
-                });
+                const prayer = prayerTimes[0];
+                for (const key in prayerNames) {
+                    timesHtml += `<p>${prayerNames[key]}: ${prayer[key]}</p>`;
+                }
                 document.getElementById("prayer-times").innerHTML = timesHtml;
             }
 
             function updateCountdown() {
                 const now = new Date();
-                const today = now.toISOString().split('T')[0];
                 const prayer = prayerTimes[0];
                 const prayerOrder = ["fajr", "dhuhr", "asr", "maghrib", "isha"];
-                
+                let nextPrayer = null;
+                let nextPrayerTime = null;
+
                 for (let i = 0; i < prayerOrder.length; i++) {
-                    let prayerTime = new Date(`${today}T${prayer[prayerOrder[i]]}:00`);
+                    let [hours, minutes] = prayer[prayerOrder[i]].split(":").map(Number);
+                    let prayerTime = new Date();
+                    prayerTime.setHours(hours, minutes, 0, 0);
+
                     if (now < prayerTime) {
-                        let timeDiff = (prayerTime - now) / 1000;
-                        let hours = Math.floor(timeDiff / 3600);
-                        let minutes = Math.floor((timeDiff % 3600) / 60);
-                        let seconds = Math.floor(timeDiff % 60);
-                        
-                        document.getElementById("next-prayer").innerText = `بانگێ بهێت: ${prayerNames[prayerOrder[i]]}`;
-                        document.getElementById("countdown").innerText = `${hours}:${minutes}:${seconds}`;
+                        nextPrayer = prayerOrder[i];
+                        nextPrayerTime = prayerTime;
                         break;
                     }
+                }
+
+                if (nextPrayer && nextPrayerTime) {
+                    let timeDiff = Math.floor((nextPrayerTime - now) / 1000);
+                    let hours = Math.floor(timeDiff / 3600);
+                    let minutes = Math.floor((timeDiff % 3600) / 60);
+                    let seconds = timeDiff % 60;
+                    document.getElementById("next-prayer").innerText = `بانگێ بهێت: ${prayerNames[nextPrayer]}`;
+                    document.getElementById("countdown").innerText = `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                } else {
+                    document.getElementById("next-prayer").innerText = "بانگێ بهێت: سپێدە";
+                    document.getElementById("countdown").innerText = "--:--";
                 }
             }
 
