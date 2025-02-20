@@ -65,9 +65,9 @@
 </head>
 <body>
 
-    <h1>دەمێن بانگێ</h1>
+    <h1>دەمێن بانگا</h1>
 
-    <div id="next-prayer">بانگێ بهێت... </div>
+    <div id="next-prayer">بانگێ بهێت: سپێدە</div>
     <div id="countdown">--:--</div>
     <div id="maghrib-countdown">مەغرەب: --:--</div>
 
@@ -245,35 +245,27 @@
             }
 
             function updateMaghribCountdown() {
-                if (!maghribPassed) {
-                    const now = new Date();
-                    const timeLeft = new Date(maghribTime - now);
-                    const hoursLeft = String(timeLeft.getUTCHours()).padStart(2, "0");
-                    const minutesLeft = String(timeLeft.getUTCMinutes()).padStart(2, "0");
-                    const secondsLeft = String(timeLeft.getUTCSeconds()).padStart(2, "0");
-
-                    document.getElementById("maghrib-countdown").textContent = `${prayerNames.maghrib}: ${hoursLeft}:${minutesLeft}:${secondsLeft}`;
-                }
+                const maghribTimeLeft = new Date(maghribTime - new Date());
+                const maghribHours = String(maghribTimeLeft.getUTCHours()).padStart(2, "0");
+                const maghribMinutes = String(maghribTimeLeft.getUTCMinutes()).padStart(2, "0");
+                document.getElementById("maghrib-countdown").textContent = `مەغرەب: ${maghribHours}:${maghribMinutes}`;
             }
 
-            function displayPrayerTimes() {
-                const prayerTimesDiv = document.getElementById("prayer-times");
-                prayerTimesDiv.innerHTML = `<h3>دەمێن بانگێن ئەڤرو</h3>`;
-
+            function updatePrayerTimes() {
+                let timesHtml = "<div class='prayer-times'><h3>ئێمە دەمانەوە تایمەکانی پەیمانەکان:</h3>";
                 todaysPrayers.forEach(prayer => {
-                    prayerTimesDiv.innerHTML += `<p>${prayer.name}: ${prayer.time}</p>`;
+                    timesHtml += `<p>${prayer.name}: ${prayer.time}</p>`;
                 });
+                timesHtml += "</div>";
+                document.getElementById("prayer-times").innerHTML = timesHtml;
             }
 
-            updateCountdown();
             updateNextPrayer();
+            updatePrayerTimes();
             updateMaghribCountdown();
-            displayPrayerTimes();
-
-            setInterval(() => {
-                updateCountdown();
-            }, 1000);
+            setInterval(updateCountdown, 1000);
         });
     </script>
+
 </body>
 </html>
