@@ -9,16 +9,13 @@
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background: url('https://source.unsplash.com/1600x900/?mosque') no-repeat center center/cover;
-            background-size: cover;
+            background: url('https://images.unsplash.com/photo-1512632578888-169bbbc64f33?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat center center/cover;
             color: #f5f5f5;
-            padding: 0;
-            margin: 0;
-            height: 100vh;
+            padding: 20px;
             display: flex;
-            justify-content: center;
-            align-items: center;
             flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
         }
 
         h1 {
@@ -27,7 +24,6 @@
             padding: 10px 20px;
             border-radius: 8px;
             font-weight: bold;
-            margin-bottom: 20px;
         }
 
         #next-prayer, #countdown {
@@ -51,7 +47,7 @@
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
             width: 90%;
-            max-width: 500px;
+            max-width: 400px;
         }
 
         .prayer-times h3 {
@@ -64,6 +60,12 @@
             font-size: 18px;
             margin: 5px 0;
         }
+
+        /* Aligning the content to the center */
+        #prayer-times {
+            text-align: center;
+        }
+
     </style>
 </head>
 <body>
@@ -78,17 +80,94 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const prayerTimes = [
-                { date: "02/19", fajr: "05:24 AM", dhuhr: "12:30 PM", asr: "03:33 PM", maghrib: "05:58 PM", isha: "07:20 PM" },
-                { date: "02/20", fajr: "05:23 AM", dhuhr: "12:30 PM", asr: "03:34 PM", maghrib: "05:59 PM", isha: "07:21 PM" },
-                { date: "02/21", fajr: "05:22 AM", dhuhr: "12:30 PM", asr: "03:34 PM", maghrib: "06:00 PM", isha: "07:22 PM" },
-                { date: "02/22", fajr: "05:21 AM", dhuhr: "12:30 PM", asr: "03:35 PM", maghrib: "06:01 PM", isha: "07:23 PM" },
-                { date: "02/23", fajr: "05:20 AM", dhuhr: "12:30 PM", asr: "03:36 PM", maghrib: "06:02 PM", isha: "07:24 PM" },
-                { date: "02/24", fajr: "05:19 AM", dhuhr: "12:30 PM", asr: "03:36 PM", maghrib: "06:03 PM", isha: "07:25 PM" },
-                { date: "02/25", fajr: "05:18 AM", dhuhr: "12:29 PM", asr: "03:37 PM", maghrib: "06:04 PM", isha: "07:27 PM" },
-                { date: "02/26", fajr: "05:17 AM", dhuhr: "12:29 PM", asr: "03:38 PM", maghrib: "06:05 PM", isha: "07:28 PM" },
-                { date: "02/27", fajr: "05:16 AM", dhuhr: "12:29 PM", asr: "03:38 PM", maghrib: "06:06 PM", isha: "07:29 PM" },
-                { date: "02/28", fajr: "05:15 AM", dhuhr: "12:29 PM", asr: "03:39 PM", maghrib: "06:07 PM", isha: "07:30 PM" },
-                { date: "02/29", fajr: "05:14 AM", dhuhr: "12:29 PM", asr: "03:39 PM", maghrib: "06:07 PM", isha: "07:30 PM" }
+                {
+                    date: "02/19",
+                    fajr: "05:24 AM",
+                    dhuhr: "12:30 PM",
+                    asr: "03:33 PM",
+                    maghrib: "05:58 PM",
+                    isha: "07:20 PM",
+                },
+                {
+                    date: "02/20",
+                    fajr: "05:23 AM",
+                    dhuhr: "12:30 PM",
+                    asr: "03:34 PM",
+                    maghrib: "05:59 PM",
+                    isha: "07:21 PM",
+                },
+                {
+                    date: "02/21",
+                    fajr: "05:22 AM",
+                    dhuhr: "12:30 PM",
+                    asr: "03:34 PM",
+                    maghrib: "06:00 PM",
+                    isha: "07:22 PM",
+                },
+                {
+                    date: "02/22",
+                    fajr: "05:21 AM",
+                    dhuhr: "12:30 PM",
+                    asr: "03:35 PM",
+                    maghrib: "06:01 PM",
+                    isha: "07:23 PM",
+                },
+                {
+                    date: "02/23",
+                    fajr: "05:20 AM",
+                    dhuhr: "12:30 PM",
+                    asr: "03:36 PM",
+                    maghrib: "06:02 PM",
+                    isha: "07:24 PM",
+                },
+                {
+                    date: "02/24",
+                    fajr: "05:19 AM",
+                    dhuhr: "12:30 PM",
+                    asr: "03:36 PM",
+                    maghrib: "06:03 PM",
+                    isha: "07:25 PM",
+                },
+                {
+                    date: "02/25",
+                    fajr: "05:18 AM",
+                    dhuhr: "12:29 PM",
+                    asr: "03:37 PM",
+                    maghrib: "06:04 PM",
+                    isha: "07:27 PM",
+                },
+                {
+                    date: "02/26",
+                    fajr: "05:17 AM",
+                    dhuhr: "12:29 PM",
+                    asr: "03:38 PM",
+                    maghrib: "06:05 PM",
+                    isha: "07:28 PM",
+                },
+                {
+                    date: "02/27",
+                    fajr: "05:16 AM",
+                    dhuhr: "12:29 PM",
+                    asr: "03:38 PM",
+                    maghrib: "06:06 PM",
+                    isha: "07:29 PM",
+                },
+                {
+                    date: "02/28",
+                    fajr: "05:15 AM",
+                    dhuhr: "12:29 PM",
+                    asr: "03:39 PM",
+                    maghrib: "06:07 PM",
+                    isha: "07:30 PM",
+                },
+                {
+                    date: "02/29",
+                    fajr: "05:14 AM",
+                    dhuhr: "12:29 PM",
+                    asr: "03:39 PM",
+                    maghrib: "06:07 PM",
+                    isha: "07:30 PM",
+                }
             ];
 
             const currentTime = new Date();
