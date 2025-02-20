@@ -65,7 +65,7 @@
 </head>
 <body>
 
-    <h1>دەمێن بانگا</h1>
+    <h1>دەمێن بانگێ</h1>
 
     <div id="next-prayer">بانگێ بهێت... </div>
     <div id="countdown">--:--</div>
@@ -237,23 +237,28 @@
                 const minutesLeft = String(timeLeft.getUTCMinutes()).padStart(2, "0");
                 const secondsLeft = String(timeLeft.getUTCSeconds()).padStart(2, "0");
 
-                document.getElementById("countdown").innerText = `${hoursLeft}:${minutesLeft}:${secondsLeft}`;
-
-                const maghribLeft = new Date(maghribTime - now);
-                const maghribHours = String(maghribLeft.getUTCHours()).padStart(2, "0");
-                const maghribMinutes = String(maghribLeft.getUTCMinutes()).padStart(2, "0");
-                const maghribSeconds = String(maghribLeft.getUTCSeconds()).padStart(2, "0");
-
-                document.getElementById("maghrib-countdown").innerText = `مەغرەب: ${maghribHours}:${maghribMinutes}:${maghribSeconds}`;
+                document.getElementById("countdown").textContent = `${hoursLeft}:${minutesLeft}:${secondsLeft}`;
             }
 
             function updateNextPrayer() {
-                document.getElementById("next-prayer").innerText = `بانگێ بهێت: ${nextPrayerName}`;
+                document.getElementById("next-prayer").textContent = `بانگێ بهێت: ${nextPrayerName}`;
+            }
+
+            function updateMaghribCountdown() {
+                if (!maghribPassed) {
+                    const now = new Date();
+                    const timeLeft = new Date(maghribTime - now);
+                    const hoursLeft = String(timeLeft.getUTCHours()).padStart(2, "0");
+                    const minutesLeft = String(timeLeft.getUTCMinutes()).padStart(2, "0");
+                    const secondsLeft = String(timeLeft.getUTCSeconds()).padStart(2, "0");
+
+                    document.getElementById("maghrib-countdown").textContent = `${prayerNames.maghrib}: ${hoursLeft}:${minutesLeft}:${secondsLeft}`;
+                }
             }
 
             function displayPrayerTimes() {
                 const prayerTimesDiv = document.getElementById("prayer-times");
-                prayerTimesDiv.innerHTML = `<h3>دەمێن بانگێن ئەمڕۆ</h3>`;
+                prayerTimesDiv.innerHTML = `<h3>دەمێن بانگێن ئەڤرو</h3>`;
 
                 todaysPrayers.forEach(prayer => {
                     prayerTimesDiv.innerHTML += `<p>${prayer.name}: ${prayer.time}</p>`;
@@ -262,6 +267,7 @@
 
             updateCountdown();
             updateNextPrayer();
+            updateMaghribCountdown();
             displayPrayerTimes();
 
             setInterval(() => {
@@ -269,6 +275,5 @@
             }, 1000);
         });
     </script>
-
 </body>
 </html>
