@@ -38,6 +38,14 @@
             font-size: 30px;
             color: #FFD700;
         }
+
+        #prayer-times-box {
+            background: rgba(0, 128, 0, 0.7);
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kurdish:wght@700&display=swap" rel="stylesheet">
 </head>
@@ -48,6 +56,7 @@
     <div id="next-prayer">بانگێ بهێت: سپێدە</div>
     <div id="countdown">--:--</div>
     <div id="secondary-countdown"></div>
+    <div id="prayer-times-box"></div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -102,11 +111,17 @@
                 document.getElementById("next-prayer").innerText = `بانگێ بهێت: ${prayerNames[nextPrayer]}`;
                 document.getElementById("countdown").innerText = getTimeDifference(prayerTimes[nextPrayer]);
                 
-                if (now >= new Date().setHours(...prayerTimes["fajr"].split(":"))) {
+                if (now >= new Date().setHours(...prayerTimes["fajr"].split(":")) && nextPrayer !== "maghrib") {
                     document.getElementById("secondary-countdown").innerText = `مەغرەب: ${getTimeDifference(prayerTimes["maghrib"] )}`;
                 } else {
                     document.getElementById("secondary-countdown").innerText = "";
                 }
+
+                let prayerTimesHTML = "";
+                for (const prayer in prayerTimes) {
+                    prayerTimesHTML += `<p>${prayerNames[prayer]}: ${prayerTimes[prayer]}</p>`;
+                }
+                document.getElementById("prayer-times-box").innerHTML = prayerTimesHTML;
             }
 
             updateCountdown();
