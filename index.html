@@ -26,7 +26,7 @@
             font-weight: bold;
         }
 
-        #next-prayer, #countdown, #maghrib-countdown {
+        #next-prayer, #countdown, #secondary-countdown {
             font-size: 24px;
             font-weight: bold;
             margin: 10px 0;
@@ -35,7 +35,7 @@
             border-radius: 8px;
         }
 
-        #countdown, #maghrib-countdown {
+        #countdown, #secondary-countdown {
             font-size: 30px;
             color: #FFD700;
         }
@@ -71,7 +71,7 @@
 
     <div id="next-prayer">بانگێ بهێت: سپێدە</div>
     <div id="countdown">--:--</div>
-    <div id="maghrib-countdown"></div>
+    <div id="secondary-countdown"></div>
 
     <div class="prayer-times-container">
         <div id="prayer-times" class="prayer-times"></div>
@@ -112,9 +112,10 @@
                 const prayerOrder = ["fajr", "dhuhr", "asr", "maghrib", "isha"];
                 let nextPrayer = null;
                 let nextPrayerTime = null;
+                let maghribTime = null;
 
                 for (let i = 0; i < prayerOrder.length; i++) {
-                    let [hours, minutes] = prayer[prayerOrder[i]].split(":").map(Number);
+                    let [hours, minutes] = prayer[prayerOrder[i]].split(":" ).map(Number);
                     let prayerTime = new Date();
                     prayerTime.setHours(hours, minutes, 0, 0);
 
@@ -127,7 +128,7 @@
 
                 if (!nextPrayer) {
                     nextPrayer = "fajr";
-                    let [hours, minutes] = prayer["fajr"].split(":").map(Number);
+                    let [hours, minutes] = prayer["fajr"].split(":" ).map(Number);
                     nextPrayerTime = new Date();
                     nextPrayerTime.setDate(now.getDate() + 1);
                     nextPrayerTime.setHours(hours, minutes, 0, 0);
@@ -140,21 +141,22 @@
                 document.getElementById("next-prayer").innerText = `بانگێ بهێت: ${prayerNames[nextPrayer]}`;
                 document.getElementById("countdown").innerText = `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 
+                // Show Maghrib countdown if next prayer is Fajr
                 if (nextPrayer === "fajr") {
-                    let [maghribHours, maghribMinutes] = prayer["maghrib"].split(":").map(Number);
-                    let maghribTime = new Date();
-                    maghribTime.setHours(maghribHours, maghribMinutes, 0, 0);
-                    if (now < maghribTime) {
-                        let maghribDiff = Math.floor((maghribTime - now) / 1000);
-                        let mHours = Math.floor(maghribDiff / 3600);
-                        let mMinutes = Math.floor((maghribDiff % 3600) / 60);
-                        let mSeconds = maghribDiff % 60;
-                        document.getElementById("maghrib-countdown").innerText = `مەغرەب: ${mHours}:${mMinutes.toString().padStart(2, '0')}:${mSeconds.toString().padStart(2, '0')}`;
-                    } else {
-                        document.getElementById("maghrib-countdown").innerText = "";
+                    let [mHours, mMinutes] = prayer["maghrib"].split(":" ).map(Number);
+                    maghribTime = new Date();
+                    maghribTime.setHours(mHours, mMinutes, 0, 0);
+                    if (now > maghribTime) {
+                        maghribTime.setDate(now.getDate() + 1);
                     }
+
+                    let maghribDiff = Math.floor((maghribTime - now) / 1000);
+                    let mHrs = Math.floor(maghribDiff / 3600);
+                    let mMins = Math.floor((maghribDiff % 3600) / 60);
+                    let mSecs = maghribDiff % 60;
+                    document.getElementById("secondary-countdown").innerText = `مەغرەب: ${mHrs}:${mMins.toString().padStart(2, '0')}:${mSecs.toString().padStart(2, '0')}`;
                 } else {
-                    document.getElementById("maghrib-countdown").innerText = "";
+                    document.getElementById("secondary-countdown").innerText = "";
                 }
             }
 
