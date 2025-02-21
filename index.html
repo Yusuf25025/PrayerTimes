@@ -1,12 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ku" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prayer Times</title>
+    <title>دەمێن بانگا</title>
     <style>
-        body {
-            font-family: 'Noto Sans Kurdish', 'Arial', sans-serif;
+        @font-face {
+    font-family: 'NotoSansArabic';
+    src: url('https://fonts.gstatic.com/s/notosansarabic/v15/fC1_iVoV7lWJx04MuyIKYldmGdcgG5A.ttf') format('truetype');
+}
+
+body {
+    font-family: 'NotoSansArabic', Arial, sans-serif;
+
             text-align: center;
             background: url('https://images.unsplash.com/photo-1512632578888-169bbbc64f33?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fHx8fA%3D%3D') no-repeat center center/cover;
             color: #f5f5f5;
@@ -15,6 +21,7 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            direction: rtl;
         }
 
         h1 {
@@ -47,7 +54,6 @@
             text-align: center;
         }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kurdish:wght@700&display=swap" rel="stylesheet">
 </head>
 <body>
 
