@@ -106,6 +106,13 @@
                 isha: "عەیشا"
             };
 
+            // Helper function to convert 24-hour time to 12-hour format (without AM/PM)
+            function convertTo12HourFormat(time24) {
+                const [hours, minutes] = time24.split(":").map(Number);
+                const hours12 = hours % 12 || 12; // Convert 0 to 12 for 12-hour format
+                return `${hours12}:${minutes.toString().padStart(2, '0')}`;
+            }
+
             // Get today's date and use it to fetch the correct prayer times
             const today = new Date();
             const dayOfMonth = today.getDate() - 1; // Subtract 1 to match array index (0-based)
@@ -154,7 +161,8 @@
 
                 let prayerTimesHTML = "";
                 for (const prayer in prayerTimes) {
-                    prayerTimesHTML += `<p>${prayerNames[prayer]}: ${prayerTimes[prayer]}</p>`;
+                    const time12Hour = convertTo12HourFormat(prayerTimes[prayer]);
+                    prayerTimesHTML += `<p>${prayerNames[prayer]}: ${time12Hour}</p>`;
                 }
                 document.getElementById("prayer-times-box").innerHTML = prayerTimesHTML;
             }
